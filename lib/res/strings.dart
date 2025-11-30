@@ -20,7 +20,7 @@ abstract class AppConstant {
   static const String newsUrl = '${Env.baseUrl}pages/news.php';
   static const String qiblaFinderUrl =
       'https://qiblafinder.withgoogle.com/intl/id/onboarding';
-  static const String teachingPlannerUrl = 'https://apps.rabbaanii.sch.id/rpp/';
+  static const String teachingPlannerUrl = '${Env.mainUrl}/rpp/';
   static const String donateBankAccount = '7199325293';
   static String donateDescription = '''
 "Siapa yang membangun masjid karena Allah walaupun hanya selubang tempat burung bertelur atau lebih kecil, maka Allah bangunkan baginya (rumah) seperti itu pula di surga.” (HR. Ibnu Majah no.783)"

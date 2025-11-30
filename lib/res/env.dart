@@ -8,4 +8,6 @@ abstract class Env {
   static final String mapsApiKey = _Env.mapsApiKey;
   @EnviedField(varName: 'BASE_URL')
   static const String baseUrl = _Env.baseUrl;
+  @EnviedField(varName: 'MAIN_URL')
+  static const String mainUrl = _Env.mainUrl;
 }
