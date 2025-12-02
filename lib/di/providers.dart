@@ -8,6 +8,7 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
 import 'package:rabbaanii_portal/res/env.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
+import 'package:rabbaanii_portal/utils/debug_dio_interceptor.dart';
 import 'package:rabbaanii_portal/utils/logging_interceptor.dart';
 import 'package:rabbaanii_portal/utils/response_interceptor.dart';
 import 'package:rabbaanii_portal/utils/shared_preferences_helper.dart';
@@ -40,12 +41,16 @@ Login? getCurrentUser(GetCurrentUserRef ref) {
 Dio dio(DioRef ref) {
   final dio = Dio();
   dio.interceptors.add(ResponseInterceptor());
-  dio.interceptors.add(
-    PrettyDioLogger(
-      requestBody: true,
-    ),
-  );
-  dio.options.headers['content-Type'] = 'application/json';
+  // dio.interceptors.add(DebugDioInterceptor());
+  // Uncomment berikut untuk log request/response Dio dengan PrettyDioLogger
+  dio.interceptors.add(PrettyDioLogger(
+    requestBody: true,
+    responseBody: true,
+    requestHeader: true,
+    responseHeader: true,
+  ));
+
+  dio.options.headers['Content-Type'] = 'application/json';
   dio.options.baseUrl = Env.baseUrl;
   return dio;
 }
@@ -55,7 +60,7 @@ FirebaseMessaging firebaseMessaging(FirebaseMessagingRef ref) {
   final fcm = FirebaseMessaging.instance;
   fcm.requestPermission();
   fcm.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
+    alert: true, // Tampilkan heads-up notification
     badge: true,
     sound: true,
   );
@@ -92,7 +97,7 @@ String? formatTime(FormatTimeRef ref, String? timeString, {String? format}) {
   try {
     final dateTime = DateFormat('HH:mm:ss').parse(timeString).toLocal();
     return DateFormat(format ?? 'HH:mm').format(dateTime);
-  } catch (e) {
+  } catch (_) {
     return null;
   }
 }
@@ -105,8 +110,7 @@ String formatCurrency(FormatCurrencyRef ref, dynamic number) {
     decimalDigits: 0,
   );
   final parseNominal = double.tryParse('$number') ?? 0;
-  final nominal = currencyFormat.format(parseNominal);
-  return nominal;
+  return currencyFormat.format(parseNominal);
 }
 
 @riverpod
@@ -118,53 +122,30 @@ String? formatDate(FormatDateRef ref, String dateString, {String? format}) {
 
 @riverpod
 String? formatTimeFromDate(FormatTimeFromDateRef ref, String? dateString) {
-  if (dateString == null) {
-    return null;
-  }
+  if (dateString == null) return null;
   final dateTime = DateTime.tryParse(dateString)?.toLocal();
-  if (dateTime == null) {
-    return null;
-  }
+  if (dateTime == null) return null;
   return DateFormat('HH:mm').format(dateTime);
 }
 
 @riverpod
 Future<Position> getCurrentLocation(GetCurrentLocationRef ref) async {
-  bool serviceEnabled;
-  LocationPermission permission;
+  final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) return Future.error('Location services are disabled.');
 
-  // Test if location services are enabled.
-  serviceEnabled = await Geolocator.isLocationServiceEnabled();
-  if (!serviceEnabled) {
-    // Location services are not enabled don't continue
-    // accessing the position and request users of the
-    // App to enable the location services.
-    return Future.error('Location services are disabled.');
-  }
-
-  permission = await Geolocator.checkPermission();
+  var permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      // Permissions are denied, next time you could try
-      // requesting permissions again (this is also where
-      // Android's shouldShowRequestPermissionRationale
-      // returned true. According to Android guidelines
-      // your App should show an explanatory UI now.
       return Future.error('Location permissions are denied');
     }
   }
 
   if (permission == LocationPermission.deniedForever) {
-    // Permissions are denied forever, handle appropriately.
     return Future.error(
-      'Location permissions are permanently denied, we cannot request permissions.',
-    );
+        'Location permissions are permanently denied, cannot request permissions.');
   }
 
-  // When we reach here, permissions are granted and we can
-  // continue accessing the position of the device.
   return await Geolocator.getCurrentPosition(
-    desiredAccuracy: LocationAccuracy.high,
-  );
+      desiredAccuracy: LocationAccuracy.high);
 }

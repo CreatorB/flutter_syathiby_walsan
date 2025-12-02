@@ -61,7 +61,7 @@ class SettingScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${fetchUserProfile.valueOrNull?.nameParent}',
+                                '${(fetchUserProfile.valueOrNull?.nameParent ?? fetchUserProfile.valueOrNull?.email ?? '').substring(0, 15)}...',
                                 style: context.titleMediumBold,
                               ),
                               const SizedBox(height: 4.0),

@@ -2,7 +2,7 @@ import 'package:rabbaanii_portal/res/env.dart';
 
 abstract class AppConstant {
   static const String appName = 'RABBAANII PORTAL';
-  static const String youtubeChannelName = 'Rabbaanii TV';
+  static const String youtubeChannelName = 'Media Channel';
   static const String keyLoginSession = 'login_session';
   static const String keyUserSession = 'user_session';
   static const String keyDeviceToken = 'device_token';

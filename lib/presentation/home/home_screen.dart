@@ -1,12 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rabbaanii_portal/generated/assets.gen.dart';
-import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/store/store.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
 import 'package:rabbaanii_portal/presentation/home/bottomsheet_add_student_screen.dart';
@@ -17,6 +19,7 @@ import 'package:rabbaanii_portal/utils/custom_avatar_widget.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/json_helper.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -27,84 +30,273 @@ import '../../res/strings.dart';
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
 
+  String _getValidImageUrl(String? url) {
+    if (url == null || url.trim().isEmpty) {
+      return '';
+    }
+    return url;
+  }
+
+  /// Fetch detail student dengan debug detail
+  Future<List<Store>> _safelyFetchDetailStudent(String key, Dio dio) async {
+    try {
+      print('🔍 Fetching detail student dengan key: $key');
+      final response = await dio.get(
+        'settings/detailwali.php',
+        queryParameters: {'key': key},
+        options: Options(
+          responseType: ResponseType.plain,
+          receiveTimeout: const Duration(seconds: 10),
+        ),
+      );
+
+      print('📡 Response Status: ${response.statusCode}');
+
+      final raw = response.data;
+      print('📦 Raw response type: ${raw.runtimeType}');
+
+      if (raw == null || raw.toString().isEmpty) {
+        print('⚠️ Response kosong/null!');
+        return [];
+      }
+
+      final rawString = raw.toString();
+
+      try {
+        final cleanJson =
+            extractJsonSafely(rawString, endpoint: 'detailwali.php');
+        print('✅ cleanJson extracted');
+
+        final json = jsonDecode(cleanJson);
+        print('✅ Decoded JSON');
+
+        if (json is! Map<String, dynamic>) {
+          print('⚠️ JSON bukan Map: ${json.runtimeType}');
+          return [];
+        }
+
+        final data = json['data'];
+        if (data is! List) {
+          print('⚠️ data bukan List: ${data.runtimeType}');
+          return [];
+        }
+
+        print('✅ Parse ${data.length} items dari detailwali');
+
+        return data
+            .map((e) {
+              try {
+                if (e is! Map<String, dynamic>) {
+                  print('⚠️ Item bukan Map: ${e.runtimeType}');
+                  return null;
+                }
+                return Store.fromJson(e);
+              } catch (err) {
+                print('⚠️ Parse Store error: $err, data: $e');
+                return null;
+              }
+            })
+            .whereType<Store>()
+            .toList();
+      } catch (parseError) {
+        print('⚠️ JSON parse error: $parseError');
+        return [];
+      }
+    } catch (err) {
+      print('❌ Network error _safelyFetchDetailStudent: $err');
+      return [];
+    }
+  }
+
+  /// Fetch student data dengan debug detail
+  Future<List<Store>> _safelyFetchStudentData(String key, Dio dio) async {
+    try {
+      print('🔍 Fetching student data dengan key: $key');
+      final response = await dio.get(
+        'settings/datasiswa.php',
+        queryParameters: {'key': key},
+        options: Options(
+          responseType: ResponseType.plain,
+          receiveTimeout: const Duration(seconds: 10),
+        ),
+      );
+
+      print('📡 Response Status: ${response.statusCode}');
+
+      final raw = response.data;
+      print('📦 Raw response type: ${raw.runtimeType}');
+
+      if (raw == null || raw.toString().isEmpty) {
+        print('⚠️ Response kosong/null!');
+        return [];
+      }
+
+      final rawString = raw.toString();
+
+      try {
+        final cleanJson =
+            extractJsonSafely(rawString, endpoint: 'datasiswa.php');
+        print('✅ cleanJson extracted');
+
+        final json = jsonDecode(cleanJson);
+        print('✅ Decoded JSON');
+
+        if (json is! Map<String, dynamic>) {
+          print('⚠️ JSON bukan Map: ${json.runtimeType}');
+          return [];
+        }
+
+        final data = json['data'];
+        if (data is! List) {
+          print('⚠️ data bukan List: ${data.runtimeType}');
+          return [];
+        }
+
+        print('✅ Parse ${data.length} items dari datasiswa');
+
+        return data
+            .map((e) {
+              try {
+                if (e is! Map<String, dynamic>) {
+                  print('⚠️ Item bukan Map: ${e.runtimeType}');
+                  return null;
+                }
+                return Store.fromJson(e);
+              } catch (err) {
+                print('⚠️ Parse Store error: $err, data: $e');
+                return null;
+              }
+            })
+            .whereType<Store>()
+            .toList();
+      } catch (parseError) {
+        print('⚠️ JSON parse error: $parseError');
+        return [];
+      }
+    } catch (err) {
+      print('❌ Network error _safelyFetchStudentData: $err');
+      return [];
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(getCurrentUserProvider);
-    final key = '${currentUser?.key}';
+    final key = currentUser?.key ?? '';
     final token = ref
         .watch(sharedPreferencesHelperProvider)
         .getString(AppConstant.keyDeviceToken);
-    final saveTokenToServer = useMemoized(
-      () => ref.watch(
-        saveTokenToServerProvider(
-          key: '${currentUser?.token}',
-          token: '$token',
-        ).future,
-      ),
-    );
-    useFuture(saveTokenToServer);
 
-    final fetchDetailStudent = ref.watch(
-      fetchDetailStudentProvider(
-        key: key,
-      ),
+    final dio = ref.watch(dioProvider);
+
+    // ✅ FIX 1: Hanya call saveTokenToServer jika key dan token valid
+    final saveTokenToServer = useMemoized(
+      () {
+        final keyValue = currentUser?.key ?? '';
+        final tokenValue = token ?? '';
+
+        // Jika key atau token kosong, skip request
+        if (keyValue.isEmpty || tokenValue.isEmpty) {
+          print('⚠️ Skip saveTokenToServer: key atau token kosong');
+          return null;
+        }
+
+        print('✅ Calling saveTokenToServer dengan key: $keyValue');
+        return ref.watch(
+          saveTokenToServerProvider(
+            key: keyValue,
+            token: tokenValue,
+          ).future,
+        );
+      },
+      [currentUser?.key, token],
     );
-    final fetchStudent = ref.watch(
-      fetchStudentDataProvider(
-        key: key,
-      ),
+
+    // Hanya trigger useFuture jika saveTokenToServer tidak null
+    if (saveTokenToServer != null) {
+      useFuture(saveTokenToServer);
+    }
+
+    final fetchDetailFuture = useMemoized(
+      () => key.isNotEmpty
+          ? _safelyFetchDetailStudent(key, dio)
+          : Future.value([]),
+      [key],
     );
-    final detailStudent = fetchDetailStudent.valueOrNull?.firstOrNull;
-    ref.listen(
-      fetchDetailStudentProvider(
-        key: key,
-      ),
-      (previous, next) => next.showToastOnError(context),
+    final fetchStudentFuture = useMemoized(
+      () =>
+          key.isNotEmpty ? _safelyFetchStudentData(key, dio) : Future.value([]),
+      [key],
     );
+
+    final fetchDetailAsync = useFuture(fetchDetailFuture);
+    final fetchStudentAsync = useFuture(fetchStudentFuture);
+
+    final detailStudent = fetchDetailAsync.data?.firstOrNull;
+    final students = fetchStudentAsync.data != null
+        ? List<Store>.from(fetchStudentAsync.data!)
+        : null;
+
     final checkUpdateApp = useMemoized(() => _checkAppUpdate(context));
     useFuture(checkUpdateApp);
 
-    final checkPayment = ref.watch(
-      fetchCheckPaymentProvider(studentId: '${detailStudent?.type}'),
-    );
+    // ✅ PENTING: Cek dari login response, bukan hit API external
+    final packages = currentUser?.toJson()?['packages'] ?? 0;
+    final isUserPremium = packages == 1;
+
+    print('💡 🔍 packages: $packages → isUserPremium: $isUserPremium');
+
+    final checkPayment = AsyncData<Map<String, dynamic>?>({
+      'errCode': '200',
+      'success': isUserPremium ? 'true' : 'false',
+      'msg': isUserPremium
+          ? 'Akses diberikan'
+          : 'Paket belum aktif, hubungi admin',
+    });
+
     final payment = checkPayment.valueOrNull;
     final errorCode = payment?['errCode'];
     final isSettled = payment?['success'];
     final message = payment?['msg'];
 
+    print('📌 isSettled: $isSettled → message: $message');
+
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () {
-          ref.invalidate(fetchDetailStudentProvider);
-          ref.invalidate(
-              fetchCheckPaymentProvider(studentId: '${detailStudent?.type}'));
-          return ref.refresh(
-            fetchStudentDataProvider(
-              key: key,
-            ).future,
-          );
+        onRefresh: () async {
+          await fetchDetailFuture;
+          await fetchStudentFuture;
+          final keyValue = currentUser?.key ?? '';
+          final tokenValue = token ?? '';
+          if (keyValue.isNotEmpty && tokenValue.isNotEmpty) {
+            await ref.refresh(saveTokenToServerProvider(
+              key: keyValue,
+              token: tokenValue,
+            ));
+          }
         },
         child: ListView(
           children: [
             _buildHeader(
               context,
-              fetchStudent.isLoading,
+              fetchDetailAsync.isLoading || fetchStudentAsync.isLoading,
               ref,
               currentUser,
-              fetchStudent.valueOrNull,
+              students,
               detailStudent,
             ),
             Column(
               children: [
-                _buildInfoPayment(
-                  context,
-                  ref,
-                  errorCode,
-                  isSettled,
-                  message,
-                ),
+                if (detailStudent != null)
+                  _buildInfoPayment(
+                    context,
+                    ref,
+                    errorCode,
+                    isSettled,
+                    message,
+                  ),
                 Skeletonizer(
-                  enabled: checkPayment.isLoading,
+                  enabled: false,
                   child: _buildMenuHome(
                     context: context,
                     errorCode: errorCode,
@@ -116,11 +308,6 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.info,
                         goToRouteName: AppRoute.studentPermit.name,
                       ),
-                      // MenuGrid(
-                      //   title: 'Tagihan',
-                      //   iconData: Icons.payment,
-                      //   goToRouteName: AppRoute.bill.name,
-                      // ),
                       MenuGrid(
                         title: 'Kesehatan',
                         iconData: Icons.healing,
@@ -131,11 +318,6 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.credit_card,
                         goToRouteName: AppRoute.studentCard.name,
                       ),
-                      // MenuGrid(
-                      //   title: 'Tabungan',
-                      //   iconData: Icons.monetization_on,
-                      //   goToRouteName: AppRoute.studentSaving.name,
-                      // ),
                       MenuGrid(
                         title: 'Penilaian',
                         iconData: Icons.edit_document,
@@ -249,7 +431,7 @@ class HomeScreen extends HookConsumerWidget {
                           );
                         },
                         label: Text(
-                          '${detailStudent?.nameStaff}',
+                          '${detailStudent?.nameStaff ?? 'Loading...'}',
                           style: context.titleMediumBold?.copyWith(
                             color: Colors.white,
                           ),
@@ -266,8 +448,10 @@ class HomeScreen extends HookConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: CustomAvatar(
                       size: 40,
-                      imageUrl: '${detailStudent?.img}',
-                      name: '${detailStudent?.nameStaff}',
+                      imageUrl: _getValidImageUrl(detailStudent?.img).isNotEmpty
+                          ? _getValidImageUrl(detailStudent?.img)
+                          : '',
+                      name: detailStudent?.nameStaff ?? 'User',
                       color: context.colorInversePrimary,
                       bold: true,
                     ),
@@ -295,13 +479,13 @@ class HomeScreen extends HookConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '${detailStudent?.nameStore}',
+                            '${detailStudent?.nameStore ?? 'Loading...'}',
                             style: context.titleMediumBold?.copyWith(
                               color: Colors.white,
                             ),
                           ),
                           Text(
-                            '${detailStudent?.address}',
+                            '${detailStudent?.address ?? 'Loading...'}',
                             style: context.bodyMedium?.copyWith(
                               color: Colors.white,
                             ),
@@ -327,7 +511,7 @@ class HomeScreen extends HookConsumerWidget {
     String? message,
   ) {
     return Skeletonizer(
-      enabled: message == null,
+      enabled: false,
       child: Visibility(
         visible: isSettled == 'false' && errorCode == '200',
         child: Transform.translate(
@@ -465,7 +649,7 @@ class HomeScreen extends HookConsumerWidget {
     List<Store>? students,
     Login? currentUser,
   ) async {
-    if (students == null) return;
+    if (students == null || students.isEmpty) return;
 
     final result = await showModalActionSheet(
       context: context,

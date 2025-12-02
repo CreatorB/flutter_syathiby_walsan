@@ -19,7 +19,7 @@ FINE: Pub 3.10.0-287.0.dev
 FINE: Package Config up to date.
 
 [√] Flutter (Channel stable, 3.24.3, on Microsoft Windows [Version 10.0.26200.7171], locale en-US)
-    • Flutter version 3.24.3 on channel stable at C:\Users\Alendia\fvm\versions\3.24.3
+    • Flutter version 3.24.3 on channel stable at C:\Users\creatorbe\fvm\versions\3.24.3
     • Upstream repository https://github.com/flutter/flutter.git
     • Framework revision 2663184aa7 (1 year, 3 months ago), 2024-09-11 16:27:48 -0500
     • Engine revision 36335019a8
@@ -62,7 +62,7 @@ FINE: Package Config up to date.
     • Dart plugin version 242.22855.32
 
 [√] VS Code (version 1.106.3)
-    • VS Code at C:\Users\Alendia\AppData\Local\Programs\Microsoft VS Code
+    • VS Code at C:\Users\creatorbe\AppData\Local\Programs\Microsoft VS Code
     • Flutter extension version 3.122.0
 
 [√] Connected device (4 available)
@@ -110,6 +110,23 @@ Run app :
 ```sh
 fvm flutter clean ; fvm flutter pub get ; fvm flutter run -d 127.0.0.1:5555 -v
 ```
+
+## Customize
+
+You can customize the app with your own desired assets by replacing text or file.
+
+*Rename App and Package name*
+
+dart run flutter_application_id:main -f flutter_application_id.yaml
+
+
+
+## Git
+
+git rm --cached **/*.g.dart
+git rm --cached **/*.freezed.dart
+git rm --cached **/*.riverpod.dart
+git rm -r --cached lib/generated/
 
 ## License
 

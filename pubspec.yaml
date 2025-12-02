@@ -136,7 +136,7 @@ dev_dependencies:
   envied_generator: ^0.5.4+1
   flutter_gen_runner: ^5.8.0
   flutter_launcher_icons: ^0.14.1
-
+  flutter_application_id: ^2.0.0-dev
 
 dependency_overrides:
   geolocator: ^13.0.1

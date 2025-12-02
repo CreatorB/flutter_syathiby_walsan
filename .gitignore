@@ -54,5 +54,16 @@ app.*.map.json
 # Json Serializable files
 **/*.g.dart
 
+# Generated files
+*.g.dart
+*.freezed.dart
+*.riverpod.dart
+
+# Build generated
+lib/generated/
+lib/**/*.g.dart
+lib/**/*.freezed.dart
+lib/**/*.riverpod.dart
+
 # Riverpod files
 **/*.riverpod.dart

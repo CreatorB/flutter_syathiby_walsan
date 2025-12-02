@@ -72,7 +72,7 @@ class StudentHealthScreen extends HookConsumerWidget {
                         Skeletonizer(
                           enabled: fetchHealthRecap.isLoading,
                           child: Text(
-                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick} Kali',
+                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick ?? '0'} Kali',
                             style: context.titleMediumBold,
                           ),
                         ),
