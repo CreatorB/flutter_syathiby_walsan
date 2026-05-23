@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/models/score/score.dart';
+import 'package:rabbaanii_portal/models/wordpress/wp_post.dart';
 import 'package:rabbaanii_portal/presentation/activity/student_activity_screen.dart';
 import 'package:rabbaanii_portal/presentation/activity/tahfidz_activity_screen.dart';
 import 'package:rabbaanii_portal/presentation/calendar/calendar_school_screen.dart';
@@ -15,8 +16,6 @@ import 'package:rabbaanii_portal/presentation/holiday/qr_pickup_screen.dart';
 import 'package:rabbaanii_portal/presentation/holiday/student_homecoming_screen.dart';
 import 'package:rabbaanii_portal/presentation/home/home_screen.dart';
 import 'package:rabbaanii_portal/presentation/login/login_screen.dart';
-import 'package:rabbaanii_portal/presentation/news/detail_news_screen.dart';
-import 'package:rabbaanii_portal/presentation/news/news_screen.dart';
 import 'package:rabbaanii_portal/presentation/permit/add_permit_screen.dart';
 import 'package:rabbaanii_portal/presentation/permit/detail_permit_screen.dart';
 import 'package:rabbaanii_portal/presentation/permit/permit_screen.dart';
@@ -32,11 +31,15 @@ import 'package:rabbaanii_portal/presentation/violation/violation_list_screen.da
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/utils/adaptive_scaffold.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:rabbaanii_portal/presentation/analytics/analytics_dashboard_screen.dart';
 
-import '../models/news/news.dart';
 import '../models/prayer/hadith/book_response.dart';
 import '../models/prayer/surah/surah.dart';
 import '../presentation/activity/school_activity_screen.dart';
+import '../presentation/guest/guest_news_screen.dart';
+import '../presentation/guest/guest_prayer_screen.dart';
+import '../presentation/guest/guest_shell.dart';
+import '../presentation/guest/guest_user_screen.dart';
 import '../presentation/holiday/holiday_screen.dart';
 import '../presentation/not_found/not_found_screen.dart';
 import '../presentation/prayer/ayah_screen.dart';
@@ -52,6 +55,7 @@ import '../presentation/prayer/surah_screen.dart';
 import '../presentation/score/student_score_detail_screen.dart';
 import '../presentation/tv/tv_screen.dart';
 import '../presentation/webview/webview_screen.dart';
+import '../presentation/wordpress/wp_post_detail_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -103,10 +107,18 @@ enum AppRoute {
   homecoming,
   registrationPickup,
   qrPickup,
-  schoolActivity, tahfidzActivity, calendarSchool, financeReport, donate,
+  schoolActivity, tahfidzActivity, calendarSchool, financeReport, donate, analyticsDashboard,
+  guestNews,
+  guestDetailNews,
+  guestPrayer,
+  guestUser,
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+final _guestShellStateKey = GlobalKey<StatefulNavigationShellState>();
+final _guestNewsNavigatorKey = GlobalKey<NavigatorState>();
+final _guestPrayerNavigatorKey = GlobalKey<NavigatorState>();
+final _guestUserNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorAKey = GlobalKey<NavigatorState>();
 final _shellNavigatorBKey = GlobalKey<NavigatorState>();
 final _shellNavigatorCKey = GlobalKey<NavigatorState>();
@@ -115,21 +127,101 @@ final _shellNavigatorDKey = GlobalKey<NavigatorState>();
 @riverpod
 GoRouter goRouter(GoRouterRef ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/guest-news',
     navigatorKey: _rootNavigatorKey,
-    errorBuilder: (context, state) => const NotFoundScreen(),
+    errorBuilder: (context, state) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go('/guest-news');
+      });
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    },
     redirect: (context, state) async {
-      final session = ref
-          .read(sharedPreferencesHelperProvider)
-          .getObject<Map<String, dynamic>>(AppConstant.keyLoginSession);
+      final goingToLogin = state.matchedLocation.startsWith('/login');
+      final goingToGuest = state.matchedLocation.contains('/guest-');
 
-      final goingToLogin = state.matchedLocation.contains('/login');
-      if (session == null && !goingToLogin) {
-        return '/login';
+      Map<String, dynamic>? session;
+      try {
+        session = ref
+            .read(sharedPreferencesHelperProvider)
+            .getObject<Map<String, dynamic>>(AppConstant.keyLoginSession);
+      } catch (_) {
+        session = null;
       }
+
+      final sessionKey = session?['key']?.toString().trim();
+      final isLoggedIn = sessionKey != null &&
+          sessionKey.isNotEmpty &&
+          sessionKey.toLowerCase() != 'null';
+
+      if (!isLoggedIn) {
+        if (goingToGuest || goingToLogin) {
+          return null;
+        }
+        return '/guest-news';
+      }
+
+      if (goingToGuest || goingToLogin) {
+        return '/';
+      }
+
       return null;
     },
     routes: [
+      StatefulShellRoute.indexedStack(
+        key: _guestShellStateKey,
+        restorationScopeId: 'guestShell',
+        builder: (context, state, navigationShell) {
+          return GuestShell(
+            key: ValueKey('guestShell'),
+            navigationShell: navigationShell,
+          );
+        },
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _guestNewsNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/guest-news',
+                name: AppRoute.guestNews.name,
+                builder: (context, state) => const GuestNewsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'detail',
+                    name: AppRoute.guestDetailNews.name,
+                    builder: (context, state) => WpPostDetailScreen(
+                      post: state.extra as WpPost,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _guestPrayerNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/guest-prayer',
+                name: AppRoute.guestPrayer.name,
+                builder: (context, state) => const GuestPrayerScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _guestUserNavigatorKey,
+            routes: [
+              GoRoute(
+                path: '/guest-user',
+                name: AppRoute.guestUser.name,
+                builder: (context, state) => const GuestUserScreen(),
+              ),
+            ],
+          ),
+        ],
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             ScaffoldNestedNavigation(navigationShell),
@@ -279,6 +371,11 @@ GoRouter goRouter(GoRouterRef ref) {
                     builder: (context, state) => const FinanceReportScreen(),
                   ),
                   GoRoute(
+                    path: 'analytics-dashboard',
+                    name: AppRoute.analyticsDashboard.name,
+                    builder: (context, state) => const AnalyticsDashboardScreen(),
+                  ),
+                  GoRoute(
                     path: 'donate',
                     name: AppRoute.donate.name,
                     builder: (context, state) => const DonateMosqueeScreen(),
@@ -290,17 +387,16 @@ GoRouter goRouter(GoRouterRef ref) {
           StatefulShellBranch(
             navigatorKey: _shellNavigatorBKey,
             routes: [
-              // Shopping Cart
               GoRoute(
                 path: '/news',
                 name: AppRoute.news.name,
-                builder: (context, state) => const NewsScreen(),
+                builder: (context, state) => const GuestNewsScreen(),
                 routes: [
                   GoRoute(
                     path: 'detail-news',
                     name: AppRoute.detailNews.name,
-                    builder: (context, state) => DetailNewsScreen(
-                      news: state.extra as News,
+                    builder: (context, state) => WpPostDetailScreen(
+                      post: state.extra as WpPost,
                     ),
                   ),
                 ],
@@ -310,7 +406,6 @@ GoRouter goRouter(GoRouterRef ref) {
           StatefulShellBranch(
             navigatorKey: _shellNavigatorCKey,
             routes: [
-              // Shopping Cart
               GoRoute(
                 path: '/prayer',
                 name: AppRoute.prayer.name,

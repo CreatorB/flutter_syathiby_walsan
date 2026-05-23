@@ -6,13 +6,14 @@ part 'user.g.dart';
 @freezed
 class User with _$User {
   const factory User({
-    @JsonKey(name: 'full_name') String? fullName,
-    @JsonKey(name: 'name_parent') String? nameParent,
+    @JsonKey(name: 'full_name') String? fullName,       // wali's name (for account screen)
+    @JsonKey(name: 'name_parent') String? nameParent,   // alias for wali's name
+    @JsonKey(name: 'nama_siswa') String? namaSiswa,     // student's name (for student card)
     String? address,
     String? email,
     @JsonKey(name: 'phone_number') String? phoneNumber,
-    @JsonKey(name: 'email_parent') String? emailParent,
-    @JsonKey(name: 'img_parent') String? imageParent,
+    @JsonKey(name: 'email_parent') String? emailParent, // wali email
+    @JsonKey(name: 'img_parent') String? imageParent,   // wali photo (for account/profile)
     String? key,
     dynamic afiliasi,
     int? omset,
@@ -23,7 +24,7 @@ class User with _$User {
     int? order,
     String? type,
     @JsonKey(name: 'system_point') dynamic systemPoint,
-    String? img,
+    String? img,   // student photo (for student card)
     dynamic signup,
     @JsonKey(name: 'name_store') String? nameStore,
     @JsonKey(name: 'id_staff') String? idStaff,
@@ -32,6 +33,7 @@ class User with _$User {
     String? ttl,
     String? position,
     String? date,
+    String? kelas,
     String? absensi,
     String? tabungan,
     int? limit_harian,

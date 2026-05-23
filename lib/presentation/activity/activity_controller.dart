@@ -15,7 +15,7 @@ Future<List<Jadwal>> fetchSchoolShedule(
   required String date,
 }) async {
   final result =
-      ref.watch(scheduleServiceProvider).getSchoolSchedule(key, date);
+      ref.read(scheduleServiceProvider).getSchoolSchedule(key, date);
   return result;
 }
 
@@ -25,7 +25,7 @@ Future<List<Tahfidz>> fetchTahfidzHistory(
   required String key,
   required String date,
 }) async {
-  final result = ref.watch(tahfidzServiceProvider).get(key, date);
+  final result = ref.read(tahfidzServiceProvider).get(key, date);
   return result;
 }
 
@@ -35,7 +35,7 @@ Future<List<Rekap>> fetchStudentRecap(
   required String key,
   required String date,
 }) async {
-  final result = ref.watch(studentServiceProvider).getStudentRecap(
+  final result = ref.read(studentServiceProvider).getStudentRecap(
         key,
         date,
         date,
@@ -49,7 +49,7 @@ Future<List<Rekap>> fetchStudentActivity(
       required String key,
       required String date,
     }) async {
-  final result = ref.watch(studentServiceProvider).getStudentActivity(
+  final result = ref.read(studentServiceProvider).getStudentActivity(
     key,
     date,
     date,

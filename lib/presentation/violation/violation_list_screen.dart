@@ -29,23 +29,27 @@ class ViolationListScreen extends HookConsumerWidget {
     );
     Future<void> fetchData(int pageKey) async {
       try {
-        final result = await ref.watch(
+        final result = await ref.read(
           fetchListViolationProvider(key: key, page: pageKey)
               .future,
         );
-        final nextPageKey = pageKey + 1;
-        pagingController.appendPage(result, nextPageKey);
+        if (result.isEmpty) {
+          pagingController.appendLastPage(result);
+        } else {
+          pagingController.appendPage(result, pageKey + 1);
+        }
       } catch (error) {
         pagingController.error = error;
       }
     }
 
     useEffect(() {
-      pagingController.addPageRequestListener((pageKey) {
+      void listener(int pageKey) {
         fetchData(pageKey);
-      });
-      return null;
-    }, []);
+      }
+      pagingController.addPageRequestListener(listener);
+      return () => pagingController.removePageRequestListener(listener);
+    }, [pagingController]);
 
     return Scaffold(
       appBar: AppBar(
@@ -161,8 +165,9 @@ class ViolationListScreen extends HookConsumerWidget {
       if (dioError is RestException) {
         return dioError.message;
       }
-      return 'Telah terjadi kesalahan';
+      return 'Tidak ada list';
     } else {
+      // return 'Telah terjadi kesalahan';
       return 'Telah terjadi kesalahan';
     }
   }

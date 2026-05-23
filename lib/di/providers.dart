@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:logger/logger.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
-import 'package:rabbaanii_portal/res/env.dart';
+import 'package:rabbaanii_portal/res/environment_config.dart';
+import 'package:rabbaanii_portal/res/flavor_config.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/utils/debug_dio_interceptor.dart';
 import 'package:rabbaanii_portal/utils/logging_interceptor.dart';
@@ -41,6 +46,97 @@ Login? getCurrentUser(GetCurrentUserRef ref) {
 Dio dio(DioRef ref) {
   final dio = Dio();
   dio.interceptors.add(ResponseInterceptor());
+  // Add custom error handling interceptor
+  // dio.interceptors.add(
+  //   InterceptorsWrapper(
+  //     onResponse: (response, handler) {
+  //       debugPrint('=== RESPONSE ===');
+  //       debugPrint('Status: ${response.statusCode}');
+  //       debugPrint('Data type: ${response.data.runtimeType}');
+  //       debugPrint('Data content: ${response.data}');
+        
+  //       // Handle String response (HTML/JSON as String)
+  //       if (response.data is String) {
+  //         final dataString = response.data as String;
+  //         debugPrint('Response is String: $dataString');
+          
+  //         try {
+  //           // Try to parse as JSON
+  //           final jsonData = jsonDecode(dataString);
+            
+  //           if (jsonData is Map<String, dynamic>) {
+  //             // Cek apakah ini error response
+  //             if (jsonData.containsKey('errCode') && 
+  //                 jsonData.containsKey('msg') &&
+  //                 jsonData['errCode'] != '00') {
+  //               final msg = jsonData['msg'] ?? 'Data tidak ditemukan';
+  //               debugPrint('⚠️ API Error from JSON String: $msg');
+                
+  //               // Update response data ke parsed JSON
+  //               response.data = jsonData;
+                
+  //               return handler.reject(
+  //                 DioException(
+  //                   requestOptions: response.requestOptions,
+  //                   response: response,
+  //                   type: DioExceptionType.unknown,
+  //                   error: msg,
+  //                 ),
+  //               );
+  //             }
+              
+  //             // Success response, convert to list (retrofit expects List<Pelanggaran>)
+  //             response.data = [jsonData];
+  //           }
+  //         } catch (e) {
+  //           debugPrint('Error parsing String response as JSON: $e');
+  //         }
+          
+  //         return handler.next(response);
+  //       }
+        
+  //       // Handle List response dengan error items
+  //       if (response.data is List) {
+  //         final List<dynamic> dataList = response.data as List<dynamic>;
+          
+  //         if (dataList.isNotEmpty) {
+  //           final firstItem = dataList.first;
+            
+  //           if (firstItem is Map<String, dynamic>) {
+  //             if (firstItem.containsKey('errCode') && 
+  //                 firstItem.containsKey('msg') &&
+  //                 firstItem['errCode'] != '00') {
+  //               final msg = firstItem['msg'] ?? 'Data tidak ditemukan';
+  //               debugPrint('⚠️ API Error from List: $msg');
+                
+  //               return handler.reject(
+  //                 DioException(
+  //                   requestOptions: response.requestOptions,
+  //                   response: response,
+  //                   type: DioExceptionType.unknown,
+  //                   error: msg,
+  //                 ),
+  //               );
+  //             }
+  //           }
+  //         }
+  //       }
+        
+  //       return handler.next(response);
+  //     },
+  //     onError: (error, handler) {
+  //       debugPrint('=== DIO ERROR ===');
+  //       debugPrint('Error: $error');
+  //       debugPrint('Error type: ${error.runtimeType}');
+        
+  //       if (error.error is String) {
+  //         debugPrint('Error message: ${error.error}');
+  //       }
+        
+  //       return handler.next(error);
+  //     },
+  //   ),
+  // );
   // dio.interceptors.add(DebugDioInterceptor());
   // Uncomment berikut untuk log request/response Dio dengan PrettyDioLogger
   dio.interceptors.add(PrettyDioLogger(
@@ -51,7 +147,20 @@ Dio dio(DioRef ref) {
   ));
 
   dio.options.headers['Content-Type'] = 'application/json';
-  dio.options.baseUrl = Env.baseUrl;
+  dio.options.baseUrl = EnvironmentConfig.baseUrl;
+  return dio;
+}
+
+@Riverpod(keepAlive: true)
+Dio wordpressDio(WordpressDioRef ref) {
+  final dio = Dio();
+  dio.interceptors.add(PrettyDioLogger(
+    requestBody: false,
+    responseBody: false,
+    requestHeader: false,
+    responseHeader: false,
+  ));
+  dio.options.headers['Content-Type'] = 'application/json';
   return dio;
 }
 

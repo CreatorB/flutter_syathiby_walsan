@@ -27,9 +27,11 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+def mapsApiKey = System.getenv("MAPS_API_KEY") ?: localProperties.getProperty("MAPS_API_KEY") ?: ""
+
 android {
     namespace = "id.syathiby.walsan"
-    compileSdk = 34
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -50,13 +52,32 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders = [MAPS_API_KEY: mapsApiKey]
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("../../keystore/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            storeFile file("../../keystore/creatorbe-bundle.jks")
+            storePassword "bismillah"
+            keyAlias "creatorbe"
+            keyPassword "bismillah"
+        }
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
         }
     }
 }

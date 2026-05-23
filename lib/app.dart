@@ -1,5 +1,4 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/generated/l10n.dart';
+import 'package:rabbaanii_portal/res/flavor_config.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 
@@ -50,6 +50,19 @@ class MyApp extends HookConsumerWidget {
         theme: light,
         darkTheme: dark,
         debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          final appChild = child ?? const SizedBox.shrink();
+          // Show LOCAL banner only in development – production stays clean
+          if (FlavorConfig.isLocal) {
+            return Banner(
+              message: 'LOCAL',
+              location: BannerLocation.topEnd,
+              color: Colors.red,
+              child: appChild,
+            );
+          }
+          return appChild;
+        },
       ),
     );
   }

@@ -29,7 +29,7 @@ class ViolationController extends _$ViolationController {
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(
-      () => ref.watch(violationServiceProvider).add(
+      () => ref.read(violationServiceProvider).add(
             key,
             violationName,
             date,
@@ -54,7 +54,7 @@ class ViolationController extends _$ViolationController {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(
       () => ref
-          .watch(violationServiceProvider)
+          .read(violationServiceProvider)
           .aproveLaporanSantri(key, violationId, message, reason),
     );
     state = result;
@@ -69,7 +69,7 @@ class ViolationController extends _$ViolationController {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(
       () => ref
-          .watch(violationServiceProvider)
+          .read(violationServiceProvider)
           .updateDatePelanggaran(key, violationId, date),
     );
     state = result;
@@ -83,7 +83,7 @@ Future<List<Pelanggaran>> fetchListViolation(
   required String key,
   required int page,
 }) async {
-  final result = await ref.watch(violationServiceProvider).get(key, page);
+  final result = await ref.read(violationServiceProvider).get(key, page);
   return result;
 }
 
@@ -93,7 +93,7 @@ Future<List<Pelanggaran>> fetchViolationType(
   required String key,
   required String type,
 }) async {
-  final result = await ref.watch(violationServiceProvider).type(key, type);
+  final result = await ref.read(violationServiceProvider).type(key, type);
   return result;
 }
 
@@ -104,7 +104,7 @@ Future<List<Siswa>> fetchSearchStudent(
   required String query,
 }) async {
   final result =
-      await ref.watch(studentServiceProvider).searchSiswa(key, query);
+      await ref.read(studentServiceProvider).searchSiswa(key, query);
   return result;
 }
 
@@ -115,7 +115,7 @@ Future<List<Pelanggaran>> fetchDetailViolation(
   required String violationId,
 }) async {
   final result = await ref
-      .watch(violationServiceProvider)
+      .read(violationServiceProvider)
       .getLaporanSantri(key, violationId);
   return result;
 }

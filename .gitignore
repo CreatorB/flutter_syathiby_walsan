@@ -45,8 +45,10 @@ app.*.map.json
 # FVM Version Cache
 .fvm/
 
-# Environment variables
+# Environment variables (PENTING: jangan commit secrets)
 .env
+.env.*
+!.env.example
 
 # Freezed files
 **/*.freezed.dart
@@ -67,3 +69,8 @@ lib/**/*.riverpod.dart
 
 # Riverpod files
 **/*.riverpod.dart
+
+# Keystore files
+*.jks
+*.keystore
+!debug.keystore

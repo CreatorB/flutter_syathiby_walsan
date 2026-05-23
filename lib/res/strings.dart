@@ -1,7 +1,7 @@
-import 'package:rabbaanii_portal/res/env.dart';
+import 'package:rabbaanii_portal/res/environment_config.dart';
 
 abstract class AppConstant {
-  static const String appName = 'RABBAANII PORTAL';
+  static const String appName = 'Walsan Syathiby';
   static const String youtubeChannelName = 'Media Channel';
   static const String keyLoginSession = 'login_session';
   static const String keyUserSession = 'user_session';
@@ -12,15 +12,15 @@ abstract class AppConstant {
   static const String keyLastReadAyah = 'last_read_ayah';
   static const String keybookmarkAyah = 'bookmark_ayah';
   // URL
-  static const String storeUrl = '${Env.baseUrl}store/';
-  static const String aboutUrl = '${Env.baseUrl}pages/about.php';
-  static const String termUrl = '${Env.baseUrl}pages/term.php';
-  static const String privacyUrl = '${Env.baseUrl}pages/privacy.php';
-  static const String premiumUrl = '${Env.baseUrl}pages/premium.php?key=';
-  static const String newsUrl = '${Env.baseUrl}pages/news.php';
+  static String get storeUrl => '${EnvironmentConfig.baseUrl}store/';
+  static String get aboutUrl => '${EnvironmentConfig.baseUrl}pages/about.php';
+  static String get termUrl => '${EnvironmentConfig.baseUrl}pages/term.php';
+  static String get privacyUrl => '${EnvironmentConfig.baseUrl}pages/privacy.php';
+  static String get premiumUrl => '${EnvironmentConfig.baseUrl}pages/premium.php?key=';
+  static String get newsUrl => '${EnvironmentConfig.baseUrl}pages/news.php';
   static const String qiblaFinderUrl =
       'https://qiblafinder.withgoogle.com/intl/id/onboarding';
-  static const String teachingPlannerUrl = '${Env.mainUrl}/rpp/';
+  static String get teachingPlannerUrl => '${EnvironmentConfig.linkBase}/rpp/';
   static const String donateBankAccount = '7199325293';
   static String donateDescription = '''
 "Siapa yang membangun masjid karena Allah walaupun hanya selubang tempat burung bertelur atau lebih kecil, maka Allah bangunkan baginya (rumah) seperti itu pula di surga.” (HR. Ibnu Majah no.783)"

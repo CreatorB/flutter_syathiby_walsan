@@ -318,11 +318,11 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.credit_card,
                         goToRouteName: AppRoute.studentCard.name,
                       ),
-                      MenuGrid(
-                        title: 'Penilaian',
-                        iconData: Icons.edit_document,
-                        goToRouteName: AppRoute.subject.name,
-                      ),
+                      // MenuGrid(
+                      //   title: 'Penilaian',
+                      //   iconData: Icons.edit_document,
+                      //   goToRouteName: AppRoute.subject.name,
+                      // ),
                       MenuGrid(
                         title: 'Pelanggaran',
                         iconData: Icons.warning,
@@ -353,16 +353,16 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.calendar_month,
                         goToRouteName: AppRoute.calendarSchool.name,
                       ),
-                      MenuGrid(
-                        title: 'Lap. Keuangan',
-                        iconData: Icons.description,
-                        goToRouteName: AppRoute.financeReport.name,
-                      ),
-                      MenuGrid(
-                        title: 'Donasi Masjid',
-                        iconData: Icons.mosque,
-                        goToRouteName: AppRoute.donate.name,
-                      ),
+                      // MenuGrid(
+                      //   title: 'Lap. Keuangan',
+                      //   iconData: Icons.description,
+                      //   goToRouteName: AppRoute.financeReport.name,
+                      // ),
+                      // MenuGrid(
+                      //   title: 'Donasi Masjid',
+                      //   iconData: Icons.mosque,
+                      //   goToRouteName: AppRoute.donate.name,
+                      // ),
                     ],
                   ),
                 ),
