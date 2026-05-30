@@ -156,6 +156,13 @@ class ViolationListScreen extends HookConsumerWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          context.goNamed(AppRoute.mukholifSearch.name);
+        },
+        icon: const Icon(Icons.history_edu),
+        label: const Text('Catatan Lain'),
+      ),
     );
   }
 

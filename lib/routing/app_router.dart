@@ -27,6 +27,8 @@ import 'package:rabbaanii_portal/presentation/settings/setting/account_screen.da
 import 'package:rabbaanii_portal/presentation/settings/setting/change_password_screen.dart';
 import 'package:rabbaanii_portal/presentation/settings/setting/setting_screen.dart';
 import 'package:rabbaanii_portal/presentation/violation/detail_violation_screen.dart';
+import 'package:rabbaanii_portal/presentation/violation/mukholif_detail_screen.dart';
+import 'package:rabbaanii_portal/presentation/violation/mukholif_search_screen.dart';
 import 'package:rabbaanii_portal/presentation/violation/violation_list_screen.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/utils/adaptive_scaffold.dart';
@@ -112,6 +114,8 @@ enum AppRoute {
   guestDetailNews,
   guestPrayer,
   guestUser,
+  mukholifSearch,
+  mukholifDetail,
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -285,6 +289,26 @@ GoRouter goRouter(GoRouterRef ref) {
                           ),
                         ),
                       ]),
+                  GoRoute(
+                    path: 'mukholif-search',
+                    name: AppRoute.mukholifSearch.name,
+                    builder: (context, state) => const MukholifSearchScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'detail',
+                        name: AppRoute.mukholifDetail.name,
+                        builder: (context, state) {
+                          final extra = state.extra as Map<String, dynamic>;
+                          return MukholifDetailScreen(
+                            santrialId: extra['santri_id'] as int,
+                            studentName: extra['nama'] as String,
+                            kelas: extra['kelas'] as String?,
+                            kamar: extra['kamar'] as String?,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                   GoRoute(
                     path: 'subject',
                     name: AppRoute.subject.name,
