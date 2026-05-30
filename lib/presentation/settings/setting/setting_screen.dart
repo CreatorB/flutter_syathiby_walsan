@@ -61,7 +61,12 @@ class SettingScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${(fetchUserProfile.valueOrNull?.nameParent ?? fetchUserProfile.valueOrNull?.email ?? '').substring(0, 15)}...',
+                                _truncateString(
+                                  fetchUserProfile.valueOrNull?.nameParent ??
+                                  fetchUserProfile.valueOrNull?.email ??
+                                  '',
+                                  15,
+                                ),
                                 style: context.titleMediumBold,
                               ),
                               const SizedBox(height: 4.0),
@@ -200,6 +205,11 @@ class SettingScreen extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _truncateString(String text, int maxLength) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...';
   }
 
   Widget buildListItem(

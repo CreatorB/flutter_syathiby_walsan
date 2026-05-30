@@ -60,24 +60,26 @@ class HomeScreen extends HookConsumerWidget {
         return [];
       }
 
-      final rawString = raw.toString();
-
       try {
-        final cleanJson =
-            extractJsonSafely(rawString, endpoint: 'detailwali.php');
+        final cleanJson = extractJsonSafely(raw, endpoint: 'detailwali.php');
         print('✅ cleanJson extracted');
 
         final json = jsonDecode(cleanJson);
-        print('✅ Decoded JSON');
+        print('✅ Decoded JSON type: ${json.runtimeType}');
 
-        if (json is! Map<String, dynamic>) {
-          print('⚠️ JSON bukan Map: ${json.runtimeType}');
-          return [];
-        }
-
-        final data = json['data'];
-        if (data is! List) {
-          print('⚠️ data bukan List: ${data.runtimeType}');
+        List<dynamic> data;
+        if (json is Map<String, dynamic>) {
+          print('✅ JSON is Map, extracting data field');
+          data = json['data'];
+          if (data is! List) {
+            print('⚠️ data bukan List: ${data.runtimeType}');
+            return [];
+          }
+        } else if (json is List) {
+          print('✅ JSON is List, using directly');
+          data = json;
+        } else {
+          print('⚠️ JSON unexpected type: ${json.runtimeType}');
           return [];
         }
 
@@ -131,24 +133,26 @@ class HomeScreen extends HookConsumerWidget {
         return [];
       }
 
-      final rawString = raw.toString();
-
       try {
-        final cleanJson =
-            extractJsonSafely(rawString, endpoint: 'datasiswa.php');
+        final cleanJson = extractJsonSafely(raw, endpoint: 'datasiswa.php');
         print('✅ cleanJson extracted');
 
         final json = jsonDecode(cleanJson);
-        print('✅ Decoded JSON');
+        print('✅ Decoded JSON type: ${json.runtimeType}');
 
-        if (json is! Map<String, dynamic>) {
-          print('⚠️ JSON bukan Map: ${json.runtimeType}');
-          return [];
-        }
-
-        final data = json['data'];
-        if (data is! List) {
-          print('⚠️ data bukan List: ${data.runtimeType}');
+        List<dynamic> data;
+        if (json is Map<String, dynamic>) {
+          print('✅ JSON is Map, extracting data field');
+          data = json['data'];
+          if (data is! List) {
+            print('⚠️ data bukan List: ${data.runtimeType}');
+            return [];
+          }
+        } else if (json is List) {
+          print('✅ JSON is List, using directly');
+          data = json;
+        } else {
+          print('⚠️ JSON unexpected type: ${json.runtimeType}');
           return [];
         }
 
