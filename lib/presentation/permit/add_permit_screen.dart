@@ -83,7 +83,7 @@ class AddPermitScreen extends HookConsumerWidget {
         enabled: fetchPermitType.isLoading,
         child: RefreshIndicator(
           onRefresh: () => ref.refresh(
-            fetchPermitTypeProvider(key: key, type: 'staff').future,
+            fetchPermitTypeProvider(key: key, type: 'santri').future,
           ),
           child: ListView(
             children: [

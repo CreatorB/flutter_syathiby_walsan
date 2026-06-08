@@ -35,15 +35,18 @@ class StudentHealthScreen extends HookConsumerWidget {
                 key,
                 pageKey,
               );
-          final nextPageKey = pageKey + 1;
-          pagingController.appendPage(newItems, nextPageKey);
+          if (newItems.isEmpty) {
+            pagingController.appendLastPage(newItems);
+          } else {
+            pagingController.appendPage(newItems, pageKey + 1);
+          }
         } catch (error) {
           pagingController.error = error;
         }
       }
 
       pagingController.addPageRequestListener(fetchPage);
-      return pagingController.dispose;
+      return () => pagingController.removePageRequestListener(fetchPage);
     }, [pagingController]);
 
     return Scaffold(
@@ -72,7 +75,7 @@ class StudentHealthScreen extends HookConsumerWidget {
                         Skeletonizer(
                           enabled: fetchHealthRecap.isLoading,
                           child: Text(
-                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick} Kali',
+                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick ?? '0'} Kali',
                             style: context.titleMediumBold,
                           ),
                         ),

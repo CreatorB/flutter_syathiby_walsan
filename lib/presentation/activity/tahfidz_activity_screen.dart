@@ -135,9 +135,9 @@ class TahfidzActivityScreen extends HookConsumerWidget {
                             title: '${tahfidz?.nama_siswa} - ${tahfidz?.hour}',
                             message: 'Pengampu: ${tahfidz?.staff}\n'
                                 'Jenis: ${tahfidz?.jenis_tahfidz}\n'
-                                'Ayat/Halaman: ${tahfidz?.halaman} s/d ${tahfidz?.halaman_end}\n'
-                                'Jenis Penilaian: ${tahfidz?.jenis_penilaian}\n'
-                                'Nilai: ${tahfidz?.nilai}\n'
+                                'Ayat/Halaman: ${tahfidz?.halaman ?? "-"} s/d ${tahfidz?.halaman_end ?? "-"}\n'
+                                'Jenis Penilaian: ${tahfidz?.jenis_penilaian ?? "-"}\n'
+                                'Nilai: ${tahfidz?.nilai ?? "-"}\n'
                                 'Catatan: ${tahfidz?.detail}\n');
                       },
                       child: Padding(
@@ -169,7 +169,7 @@ class TahfidzActivityScreen extends HookConsumerWidget {
                                   ],
                                 ),
                                 Text(
-                                  '${tahfidz?.jenis_penilaian}',
+                                  '${tahfidz?.jenis_penilaian ?? "-"}',
                                   style: context.labelMedium?.copyWith(
                                     color: tahfidz?.jenis_penilaian == 'Mumtaz' ? context.colorPrimary : context.colorOnSurface,
                                   ),

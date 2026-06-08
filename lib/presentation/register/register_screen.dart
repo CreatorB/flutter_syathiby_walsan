@@ -195,7 +195,7 @@ class RegisterScreen extends HookConsumerWidget {
                 TextButton(
                   child: const Text('MASUK DISINI'),
                   onPressed: () {
-                    context.pop();
+                    context.go('/guest-user');
                   },
                 ),
               ],
