@@ -26,22 +26,26 @@ class HolidayScreen extends HookConsumerWidget {
 
     Future<void> fetchData(int pageKey) async {
       try {
-        final result = await ref.watch(
+        final result = await ref.read(
           fetchAllEventProvider(key: key, page: pageKey).future,
         );
-        final nextPageKey = pageKey + 1;
-        pagingController.appendPage(result, nextPageKey);
+        if (result.isEmpty) {
+          pagingController.appendLastPage(result);
+        } else {
+          pagingController.appendPage(result, pageKey + 1);
+        }
       } catch (error) {
         pagingController.error = error;
       }
     }
 
     useEffect(() {
-      pagingController.addPageRequestListener((pageKey) {
+      void listener(int pageKey) {
         fetchData(pageKey);
-      });
-      return null;
-    }, []);
+      }
+      pagingController.addPageRequestListener(listener);
+      return () => pagingController.removePageRequestListener(listener);
+    }, [pagingController]);
 
     return Scaffold(
       appBar: AppBar(
@@ -84,7 +88,7 @@ class HolidayScreen extends HookConsumerWidget {
                         AppRoute.homecoming.name,
                         queryParameters: {
                           'id': event.id_event,
-                          'eventName': event.name_event,
+                          'name': event.name_event,
                         },
                       );
                     },

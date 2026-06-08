@@ -45,15 +45,18 @@ class StudentHomecomingScreen extends HookConsumerWidget {
                 '$id',
                 pageKey,
               );
-          final nextPageKey = pageKey + 1;
-          pagingController.appendPage(newItems, nextPageKey);
+          if (newItems.isEmpty) {
+            pagingController.appendLastPage(newItems);
+          } else {
+            pagingController.appendPage(newItems, pageKey + 1);
+          }
         } catch (error) {
           pagingController.error = error;
         }
       }
 
       pagingController.addPageRequestListener(fetchPage);
-      return pagingController.dispose;
+      return () => pagingController.removePageRequestListener(fetchPage);
     }, [pagingController]);
 
     return Scaffold(

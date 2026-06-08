@@ -43,11 +43,11 @@ class AccountScreen extends HookConsumerWidget {
     void setProfile(User? user) {
       useEffect(() {
         if (user == null) return;
-        name.text = user.nameParent ?? '';
-        email.text = user.emailParent ?? '';
+        name.text = user.nameParent ?? user.fullName ?? '';
+        email.text = user.emailParent ?? user.email ?? '';
         phoneNumber.text = user.phoneNumber ?? '';
         address.text = user.address ?? '';
-        imageSelected.value = (null, user.imageParent);
+        imageSelected.value = (null, user.imageParent ?? user.img);
         return null;
       }, [fetchProfile]);
     }
@@ -62,7 +62,7 @@ class AccountScreen extends HookConsumerWidget {
             accountControllerProvider.notifier,
           )
           .updateProfile(
-            key: '${currentUser.token}',
+            key: '${currentUser.key}',
             fullName: name.text,
             email: email.text.trim(),
             phoneNumber: phoneNumber.text.trim(),

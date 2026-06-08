@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/models/cart/cart_service.dart';
 import 'package:rabbaanii_portal/models/change_schedule/change_schedule_service.dart';
@@ -29,13 +30,16 @@ import 'package:rabbaanii_portal/models/score/score_service.dart';
 import 'package:rabbaanii_portal/models/slip/slip_service.dart';
 import 'package:rabbaanii_portal/models/staff/staff_service.dart';
 import 'package:rabbaanii_portal/models/store/store_service.dart';
+import 'package:rabbaanii_portal/models/student/analytics_service.dart';
 import 'package:rabbaanii_portal/models/student/student_service.dart';
 import 'package:rabbaanii_portal/models/tahfidz/tahfidz_service.dart';
 import 'package:rabbaanii_portal/models/transaction/transaction_service.dart';
 import 'package:rabbaanii_portal/models/unit/unit_service.dart';
 import 'package:rabbaanii_portal/models/user/user_service.dart';
 import 'package:rabbaanii_portal/models/violation/violation_service.dart';
+import 'package:rabbaanii_portal/models/wordpress/wp_api_service.dart';
 import 'package:rabbaanii_portal/presentation/payment/payment_service.dart';
+import 'package:rabbaanii_portal/res/flavor_config.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'allocation/allocation_service.dart';
@@ -57,6 +61,31 @@ AsramaRestInterface hostelService(HostelServiceRef ref) {
 @Riverpod(keepAlive: true)
 NewsRestInterface newsService(NewsServiceRef ref) {
   return NewsRestInterface(ref.watch(dioProvider));
+}
+
+@Riverpod(keepAlive: true)
+WpApiService wpApiService(WpApiServiceRef ref) {
+  String baseUrl;
+  
+  if (kIsWeb) {
+    final hostname = Uri.base.host;
+    final isLocalDev = hostname == 'localhost' || 
+              hostname == '127.0.0.1' ||
+              hostname == '192.168.50.100';
+    
+    if (isLocalDev) {
+      baseUrl = 'http://localhost/aplikasi/geten/wordpress_proxy.php';
+    } else {
+      baseUrl = 'https://aplikasi.syathiby.id/geten/wordpress_proxy.php';
+    }
+  } else {
+    baseUrl = 'https://syathiby.id/wp-json/wp/v2';
+  }
+  
+  return WpApiService(
+    ref.watch(wordpressDioProvider),
+    baseUrl: baseUrl,
+  );
 }
 
 @Riverpod(keepAlive: true)
@@ -238,4 +267,9 @@ DhikrService dhikrService(DhikrServiceRef ref) {
 @Riverpod(keepAlive: true)
 MurottalService murottalService(MurottalServiceRef ref) {
   return MurottalService(Dio());
+}
+
+@Riverpod(keepAlive: true)
+AnalyticsRestInterface analyticsService(AnalyticsServiceRef ref) {
+  return AnalyticsRestInterface(ref.watch(dioProvider));
 }

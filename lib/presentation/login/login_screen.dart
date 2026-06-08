@@ -33,6 +33,13 @@ class LoginScreen extends HookConsumerWidget {
     useFuture(checkUpdateApp);
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/guest-user'),
+        ),
+        title: const Text('Masuk'),
+      ),
       body: Form(
         key: formKey,
         child: Center(
@@ -50,12 +57,13 @@ class LoginScreen extends HookConsumerWidget {
                     height: 175,
                   ),
                   const Gap(16),
-                  const Text(
+                 Text(
                     AppConstant.appName,
                     style: TextStyle(
                       fontSize: 28.0,
                       fontWeight: FontWeight.bold,
                       fontFamily: FontFamily.calligrapher,
+                      color: context.colorPrimary, 
                     ),
                   ),
                   const Gap(32),
@@ -141,7 +149,7 @@ class LoginScreen extends HookConsumerWidget {
                     children: [
                       Transform.translate(
                         offset: const Offset(8, 0),
-                        child: const Text('Anda Wali Santri?'),
+                        child: const Text('Belum punya akun walsan?'),
                       ),
                       TextButton(
                         child: const Text('DAFTAR DISINI'),

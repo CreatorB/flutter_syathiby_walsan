@@ -104,7 +104,7 @@ class StudentCardScreen extends HookConsumerWidget {
                       left: 16,
                       child: CustomAvatar(
                         imageUrl: '${profile?.img}',
-                        name: '${profile?.fullName}',
+                        name: '${profile?.namaSiswa ?? profile?.fullName}',
                         size: 70,
                         shape: BoxShape.rectangle,
                       ),
@@ -146,7 +146,7 @@ class StudentCardScreen extends HookConsumerWidget {
                             style: context.bodySmall,
                           ),
                           Text(
-                            'Nama   : ${profile?.fullName}',
+                            'Nama   : ${profile?.namaSiswa ?? profile?.fullName}',
                             style: context.bodySmall,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -157,6 +157,10 @@ class StudentCardScreen extends HookConsumerWidget {
                           ),
                           Text(
                             'Alamat : Indonesia',
+                            style: context.bodySmall,
+                          ),
+                          Text(
+                            'Kelas   : ${profile?.kelas ?? '-'}',
                             style: context.bodySmall,
                           ),
                         ],

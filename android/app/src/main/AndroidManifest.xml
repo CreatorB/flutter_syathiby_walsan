@@ -17,9 +17,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
 
     <application
-        android:label="Rabbaanii Portal"
-        android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon">
+        android:label="${appLabel}"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -58,7 +58,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="MAPS_KEY" />
+            android:value="${MAPS_API_KEY}" />
 
 
         <service android:name="com.ryanheise.audioservice.AudioService"

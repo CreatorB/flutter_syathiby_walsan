@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/violation/violation.dart';
+import 'package:rabbaanii_portal/models/violation/mukholif_santri.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'violation_service.g.dart';
@@ -16,6 +17,11 @@ abstract class PelanggaranRestInterface {
   Future<List<Pelanggaran>> get(
     @Query('key') String key,
     @Query('page') int? page,
+  );
+
+  @GET('get_wali_santri.php')
+  Future<MukholifSearchResponse> getWaliSantri(
+    @Query('key') String key,
   );
 
   @GET('walidetailsantri.php')
@@ -80,5 +86,23 @@ abstract class PelanggaranRestInterface {
     @Part(name: 'nama_siswa') String namaSiswa,
     @Part(name: 'detail') String detail, {
     @Part(name: 'img') File? img,
+  });
+
+  @GET('search_mukholif.php')
+  Future<MukholifSearchResponse> searchMukholifSantri(
+    @Query('key') String key,
+    @Query('nama') String nama, {
+    @Query('kelas') int? kelas,
+    @Query('kamar') int? kamar,
+  });
+
+  @GET('detail_mukholif.php')
+  Future<MukholifDetailResponse> getMukholifDetail(
+    @Query('key') String key,
+    @Query('santri_id') int santrialId,
+    @Query('start_date') String startDate,
+    @Query('end_date') String endDate, {
+    @Query('bagian') String? bagian,
+    @Query('kategori') String? kategori,
   });
 }

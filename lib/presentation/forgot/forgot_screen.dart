@@ -21,6 +21,10 @@ class ForgotScreen extends HookConsumerWidget {
     );
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/guest-user'),
+        ),
         title: const Text('Reset Password'),
       ),
       body: Form(

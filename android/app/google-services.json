@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "859044680272",
-    "project_id": "rabbaniiapps",
-    "storage_bucket": "rabbaniiapps.appspot.com"
+    "project_number": "921923279470",
+    "project_id": "syathiby-1345121",
+    "storage_bucket": "syathiby-1345121.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:859044680272:android:4d235cfc8802d29e43f755",
+        "mobilesdk_app_id": "1:921923279470:android:46c097ead14640fbb8247f",
         "android_client_info": {
-          "package_name": "com.muslimdeveloper.rabbaanii"
+          "package_name": "id.syathiby.app"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0"
+          "current_key": "AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w"
         }
       ],
       "services": {
@@ -26,72 +26,15 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:859044680272:android:3d9263e8db9bc45843f755",
+        "mobilesdk_app_id": "1:921923279470:android:7860d2129affa7afb8247f",
         "android_client_info": {
-          "package_name": "com.muslimdeveloper.rabbaanii_portal"
+          "package_name": "id.syathiby.walsan"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:859044680272:android:e8e9cda6d0a7bf4643f755",
-        "android_client_info": {
-          "package_name": "com.muslimdeveloper.rabbaaniiportal"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:859044680272:android:e7d1a9de385936d643f755",
-        "android_client_info": {
-          "package_name": "id.rabbaniiappportal.android"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:859044680272:android:9e7383ab6d3ff71543f755",
-        "android_client_info": {
-          "package_name": "id.rabbaniiapps.android"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0"
+          "current_key": "AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w"
         }
       ],
       "services": {

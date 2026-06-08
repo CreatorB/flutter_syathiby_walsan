@@ -39,7 +39,7 @@ class ChangePasswordScreen extends HookConsumerWidget {
             accountControllerProvider.notifier,
           )
           .changePassword(
-            key: '${currentUser.token}',
+            key: '${currentUser.key}',
             oldPassword: oldPassword.text.trim(),
             newPassword: newPassword.text.trim(),
           );
