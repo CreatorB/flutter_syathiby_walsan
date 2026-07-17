@@ -190,6 +190,7 @@ flutter_native_splash:
     image_dark: assets/images/syathiby_splash_1152.png
 
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - .env

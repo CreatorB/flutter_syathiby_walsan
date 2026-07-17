@@ -57,6 +57,12 @@ abstract class PermitRestInterface {
     @Query('alasan') String alasan,
   );
 
+  @GET('permit/walidecancelsantri.php')
+  Future<Message> cancelPermitSantri(
+    @Query('key') String key,
+    @Query('id') String id,
+  );
+
   @GET('permit/walilistsantri.php')
   Future<List<Permit>> getSantri(
     @Query('key') String key,

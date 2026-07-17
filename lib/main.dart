@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'di/providers.dart';
 
 SharedPreferences? globalPrefs;
+final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
