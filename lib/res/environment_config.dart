@@ -32,9 +32,14 @@ class EnvironmentConfig {
   }
 
   static bool get isLocalEnvironment {
-    final normalizedUrl = baseUrl.toLowerCase();
-    final uri = Uri.tryParse(normalizedUrl);
-    final host = uri?.host ?? normalizedUrl;
+    // Check the actual host the app is served from (Uri.base) rather than
+    // calling baseUrl — this avoids mutual recursion with baseUrl/getter.
+    String host;
+    try {
+      host = Uri.base.host.toLowerCase();
+    } catch (_) {
+      host = '';
+    }
 
     if (host == 'localhost' || host == '127.0.0.1') return true;
     if (host.startsWith('192.168.')) return true;
