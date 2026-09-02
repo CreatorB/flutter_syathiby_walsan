@@ -86,22 +86,12 @@ class LoginScreen extends HookConsumerWidget {
               ),
               child: Column(
                 children: [
-                  Image.asset(
+Image.asset(
                     Assets.images.logo.path,
                     width: 175,
                     height: 175,
                   ),
-                  const Gap(16),
-                 Text(
-                    AppConstant.appName,
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: FontFamily.calligrapher,
-                      color: context.colorPrimary, 
-                    ),
-                  ),
-                  const Gap(32),
+                  const Gap(24),
                   TextFormField(
                     controller: phoneNumberController,
                     keyboardType: TextInputType.phone,

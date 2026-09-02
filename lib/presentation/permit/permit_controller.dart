@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:rabbaanii_portal/models/message.dart';
@@ -81,7 +79,7 @@ class PermitController extends _$PermitController {
     required String classId,
     required String detail,
     required String studentId,
-    File? image,
+    List<int>? image,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(

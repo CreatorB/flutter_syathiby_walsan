@@ -2,6 +2,7 @@ import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/models/service_injection.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
+import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_controller.g.dart';
@@ -32,10 +33,14 @@ class LoginController extends _$LoginController {
   }
 
   Future<void> _saveSession(Login? login, String? token) async {
-    if (login == null || token == null) return;
+    if (login == null) return;
     final pref = ref.read(sharedPreferencesHelperProvider);
     await pref.setObject(AppConstant.keyLoginSession, login);
-    await pref.setString(AppConstant.keyDeviceToken, token);
+    // Always write device-token slot; coalesce to empty string so
+    // shared_preferences.setString never throws ArgumentError on null (web case).
+    await pref.setString(AppConstant.keyDeviceToken, token ?? '');
+    ref.invalidate(getCurrentUserProvider);
+    ref.invalidate(goRouterProvider);
   }
 
   Future<void> _saveCredentials(String phone, String password, bool rememberMe) async {

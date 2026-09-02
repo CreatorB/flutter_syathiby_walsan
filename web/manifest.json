@@ -1,11 +1,12 @@
 {
-    "name": "rabbaanii_portal",
-    "short_name": "rabbaanii_portal",
+    "name": "Walsan - Rabbaanii Portal Syathiby",
+    "short_name": "Walsan",
     "start_url": ".",
+    "scope": "/",
     "display": "standalone",
     "background_color": "#FFFFFF",
-    "theme_color": "#FFFFFF",
-    "description": "A new Flutter project.",
+    "theme_color": "#0F766E",
+    "description": "Portal orang tua/wali Syathiby - monitoring siswa, izin, presensi, dan lainnya",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
