@@ -6,6 +6,7 @@ import 'package:rabbaanii_portal/models/rekap/rekap.dart';
 import 'package:rabbaanii_portal/models/report_card/rapor.dart';
 import 'package:rabbaanii_portal/models/score/score.dart';
 import 'package:rabbaanii_portal/models/student/siswa.dart';
+import 'package:rabbaanii_portal/models/student/wali_connected.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'student_service.g.dart';
@@ -23,15 +24,15 @@ abstract class SiswaRestInterface {
   @GET('siswa/rekapsiswa.php')
   Future<List<Rekap>> getStudentRecap(
     @Query('key') String key,
-    @Query('awal') String startDate,
-    @Query('akhir') String endDate,
+    @Query('tanggal_awal') String startDate,
+    @Query('tanggal_akhir') String endDate,
   );
 
-  @GET('siswa/aktivitassiswa.php')
+  @GET('siswa/rekapsiswa.php')
   Future<List<Rekap>> getStudentActivity(
       @Query('key') String key,
-      @Query('awal') String startDate,
-      @Query('akhir') String endDate,
+      @Query('tanggal_awal') String startDate,
+      @Query('tanggal_akhir') String endDate,
       );
 
   @GET('siswa/nilaiwali.php')
@@ -319,6 +320,11 @@ abstract class SiswaRestInterface {
     @Part(name: 'address') String alamat, {
     @Part(name: 'img') File? img,
   });
+
+  @GET('siswa/getsiswawali.php')
+  Future<List<WaliConnected>> getConnectedWalis(
+    @Query('id_siswa') String idSiswa,
+  );
 
   @POST('settings/updatepassword.php')
   @FormUrlEncoded()

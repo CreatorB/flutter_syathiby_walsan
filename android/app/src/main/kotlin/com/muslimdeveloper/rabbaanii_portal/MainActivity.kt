@@ -1,4 +1,4 @@
-package com.muslimdeveloper.rabbaanii_portal
+package walsan.syathiby.id
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 import com.ryanheise.audioservice.AudioServiceFragmentActivity

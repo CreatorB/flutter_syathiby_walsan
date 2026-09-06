@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/slip/absent.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
+import 'package:rabbaanii_portal/models/user/register_wali_token.dart';
 import 'package:rabbaanii_portal/models/user/request_logout.dart';
 import 'package:rabbaanii_portal/models/user/user.dart';
 import 'package:retrofit/retrofit.dart';
@@ -24,9 +25,7 @@ abstract class UserService {
   );
 
   @POST('profile/gettokenwali.php')
-  Future<User> getToken(
-    @Body() RequestLogout requestLogout,
-  );
+  Future<User> registerWaliToken(@Body() RegisterWaliToken request);
 
   @POST('profile/logout.php')
   Future<Absent> getLogout(
@@ -114,7 +113,7 @@ abstract class UserService {
     @Part(name: 'email') String email,
     @Part(name: 'phone_number') String phoneNumber,
     @Part(name: 'address') String address, {
-    @Part(name: 'img') File? file,
+    @Part(name: 'img', fileName: 'profile.jpg') List<int>? file,
   });
 
   @POST('settings/updatepassword.php')

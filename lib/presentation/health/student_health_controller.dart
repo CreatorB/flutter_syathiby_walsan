@@ -11,7 +11,7 @@ Future<List<Kesehatan>> fetchStudentHealthDetail(
   required String key,
   required String id,
 }) async {
-  final result = ref.watch(healthServiceProvider).getLaporanSantri(
+  final result = ref.read(healthServiceProvider).getLaporanSantri(
         key,
         id,
       );
@@ -23,6 +23,6 @@ Future<List<Kesehatan>> fetchStudentHealthRecap(
   FetchStudentHealthRecapRef ref, {
   required String key,
 }) async {
-  final result = ref.watch(healthServiceProvider).getKesehatan(key);
+  final result = ref.read(healthServiceProvider).getKesehatan(key);
   return result;
 }

@@ -61,7 +61,12 @@ class SettingScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${fetchUserProfile.valueOrNull?.nameParent}',
+                                _truncateString(
+                                  fetchUserProfile.valueOrNull?.nameParent ??
+                                  fetchUserProfile.valueOrNull?.email ??
+                                  '',
+                                  15,
+                                ),
                                 style: context.titleMediumBold,
                               ),
                               const SizedBox(height: 4.0),
@@ -166,9 +171,11 @@ class SettingScreen extends HookConsumerWidget {
                 width: double.infinity,
                 child: TextButton.icon(
                   onPressed: () async {
-                    await ref
-                        .watch(sharedPreferencesHelperProvider)
-                        .remove(AppConstant.keyLoginSession);
+                    final pref = ref.read(sharedPreferencesHelperProvider);
+                    await pref.remove(AppConstant.keyLoginSession);
+                    await pref.remove(AppConstant.keyRememberMe);
+                    await pref.remove(AppConstant.keySavedPhone);
+                    await pref.remove(AppConstant.keySavedPassword);
 
                     if (!context.mounted) return;
                     context.goNamed(AppRoute.login.name);
@@ -200,6 +207,11 @@ class SettingScreen extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  String _truncateString(String text, int maxLength) {
+    if (text.length <= maxLength) return text;
+    return '${text.substring(0, maxLength)}...';
   }
 
   Widget buildListItem(

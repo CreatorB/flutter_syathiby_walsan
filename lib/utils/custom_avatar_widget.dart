@@ -23,6 +23,14 @@ class CustomAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Robust null/empty check — handle Dart null (via toString 'null') and literal 'null'/'undefined'
+    if (imageUrl.isEmpty ||
+        imageUrl.trim().isEmpty ||
+        imageUrl == 'null' ||
+        imageUrl.trim() == 'null') {
+      return _buildFallbackAvatar(context);
+    }
+
     final avatar = CachedNetworkImage(
       imageUrl: imageUrl,
       width: size,
@@ -51,6 +59,24 @@ class CustomAvatar extends StatelessWidget {
           shape: BoxShape.circle,
           color: color ?? context.colorPrimary,
         ),
+      ),
+    );
+    if (shape == null) return ClipOval(child: avatar);
+    return avatar;
+  }
+
+  // ✅ Fallback untuk empty imageUrl
+  Widget _buildFallbackAvatar(BuildContext context) {
+    final avatar = AdvancedAvatar(
+      name: name,
+      size: size,
+      autoTextSize: true,
+      style: TextStyle(
+        fontWeight: bold ? FontWeight.bold : FontWeight.normal,
+      ),
+      decoration: BoxDecoration(
+        shape: shape ?? BoxShape.circle,
+        color: color ?? context.colorPrimary,
       ),
     );
     if (shape == null) return ClipOval(child: avatar);

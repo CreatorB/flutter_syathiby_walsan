@@ -1,7 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/generated/l10n.dart';
+import 'package:rabbaanii_portal/res/flavor_config.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 
@@ -45,17 +46,34 @@ class MyApp extends HookConsumerWidget {
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        supportedLocales: S.delegate.supportedLocales,
+        supportedLocales: S.supportedLocales,
         routerConfig: goRouter,
         theme: light,
         darkTheme: dark,
         debugShowCheckedModeBanner: false,
+        builder: (context, child) {
+          final appChild = child ?? const SizedBox.shrink();
+          // Show LOCAL banner only in development – production stays clean
+          if (FlavorConfig.isLocal) {
+            return Banner(
+              message: 'LOCAL',
+              location: BannerLocation.topEnd,
+              color: Colors.red,
+              child: appChild,
+            );
+          }
+          return appChild;
+        },
       ),
     );
   }
 
   // It is assumed that all messages contain a data field with the key 'type'
   Future<void> setupInteractedMessage(WidgetRef ref) async {
+    // Firebase is not initialized on web (see main.dart), so
+    // FirebaseMessaging.instance would throw here.
+    if (kIsWeb) return;
+
     // Get any messages which caused the application to open from
     // a terminated state.
     RemoteMessage? initialMessage =

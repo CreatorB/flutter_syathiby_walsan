@@ -35,15 +35,18 @@ class StudentHealthScreen extends HookConsumerWidget {
                 key,
                 pageKey,
               );
-          final nextPageKey = pageKey + 1;
-          pagingController.appendPage(newItems, nextPageKey);
+          if (newItems.isEmpty) {
+            pagingController.appendLastPage(newItems);
+          } else {
+            pagingController.appendPage(newItems, pageKey + 1);
+          }
         } catch (error) {
           pagingController.error = error;
         }
       }
 
       pagingController.addPageRequestListener(fetchPage);
-      return pagingController.dispose;
+      return () => pagingController.removePageRequestListener(fetchPage);
     }, [pagingController]);
 
     return Scaffold(
@@ -72,7 +75,7 @@ class StudentHealthScreen extends HookConsumerWidget {
                         Skeletonizer(
                           enabled: fetchHealthRecap.isLoading,
                           child: Text(
-                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick} Kali',
+                            '${fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick ?? '0'} Kali',
                             style: context.titleMediumBold,
                           ),
                         ),
@@ -88,7 +91,7 @@ class StudentHealthScreen extends HookConsumerWidget {
               pagingController: pagingController,
               builderDelegate: PagedChildBuilderDelegate(
                 itemBuilder: (context, item, index) {
-                  return _studentHealthItem(context, ref, item);
+                  return _studentHealthItem(context, ref, item, index: index);
                 },
               ),
             ),
@@ -101,12 +104,22 @@ class StudentHealthScreen extends HookConsumerWidget {
   Widget _studentHealthItem(
     BuildContext context,
     WidgetRef ref,
-    Kesehatan studentHealth,
-  ) {
+    Kesehatan studentHealth, {
+    int? index,
+  }) {
     final dateFormat = ref.watch(formatDateProvider(
       '${studentHealth.date}',
       format: 'EEE, dd MMMM yyyy',
     ));
+    final currentUser = ref.watch(getCurrentUserProvider);
+    final key = '${currentUser?.key}';
+    final fetchHealthRecap = ref.watch(
+      fetchStudentHealthRecapProvider(key: key),
+    );
+    final totalSick = fetchHealthRecap.valueOrNull?.firstOrNull?.totalSick ?? 0;
+    final badgeNumber = (index != null && totalSick > 0)
+        ? (totalSick - index).clamp(1, totalSick)
+        : 0;
     return ListTile(
       title: Text(
         '${studentHealth.nama_siswa}',
@@ -133,10 +146,49 @@ class StudentHealthScreen extends HookConsumerWidget {
           ),
         ],
       ),
-      leading: CustomAvatar(
-        name: '${studentHealth.nama_siswa}',
-        imageUrl: '${studentHealth.img}',
-        size: 40,
+      leading: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          CustomAvatar(
+            name: '${studentHealth.nama_siswa}',
+            imageUrl: '${studentHealth.img}',
+            size: 40,
+          ),
+          if (badgeNumber > 0)
+            Positioned(
+              right: -6,
+              top: -6,
+              child: Container(
+                constraints: const BoxConstraints(
+                  minWidth: 22,
+                  minHeight: 22,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 6,
+                  vertical: 2,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0F8644),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFFFFFFFF),
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    '$badgeNumber',
+                    style: const TextStyle(
+                      color: Color(0xFFFFFFFF),
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       onTap: () {
         context.goNamed(

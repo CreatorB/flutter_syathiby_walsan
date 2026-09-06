@@ -16,7 +16,7 @@ class PagingStudentHealthController extends _$PagingStudentHealthController
     return await init(
       dataFetcher: PaginatedDataRepository(
         fetcher: ({required page, query}) async {
-          final results = await ref.watch(healthServiceProvider).get(key, page);
+          final results = await ref.read(healthServiceProvider).get(key, page);
           return PaginatedResponse(data: results);
         },
       ),

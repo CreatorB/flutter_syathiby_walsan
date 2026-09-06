@@ -1,5 +1,7 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/presentation/permit/permit_controller.dart';
@@ -95,6 +97,28 @@ class DetailPermitScreen extends HookConsumerWidget {
                         ? '${permit?.status} dengan alasan ${permit?.alasan}'
                         : '${permit?.status}',
                   ),
+                  if (permit?.tapKeluar != null || permit?.tapMasuk != null) ...[
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'Record Tap Izin',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: context.colorOnSurface,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    _buildDetailItem(
+                      context,
+                      'Tap Keluar',
+                      permit?.tapKeluar ?? '-',
+                    ),
+                    _buildDetailItem(
+                      context,
+                      'Tap Masuk',
+                      permit?.tapMasuk ?? '-',
+                    ),
+                  ],
                   Text(
                     'Dokumen Pendukung',
                     style: TextStyle(
@@ -115,6 +139,21 @@ class DetailPermitScreen extends HookConsumerWidget {
                       ),
                     ),
                   ),
+                  if (isPermitWaiting) ...[
+                    const SizedBox(height: 24.0),
+                    FilledButton.tonalIcon(
+                      onPressed: () => _confirmAndCancel(context, ref, key, permitId),
+                      icon: Icon(Icons.cancel_outlined, color: context.colorError),
+                      label: Text(
+                        'Batalkan Izin',
+                        style: TextStyle(color: context.colorError),
+                      ),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: context.colorErrorContainer,
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16.0),
                 ],
               ),
@@ -147,5 +186,37 @@ class DetailPermitScreen extends HookConsumerWidget {
         const SizedBox(height: 12.0),
       ],
     );
+  }
+
+  Future<void> _confirmAndCancel(
+    BuildContext context,
+    WidgetRef ref,
+    String key,
+    String permitId,
+  ) async {
+    final confirm = await showOkCancelAlertDialog(
+      context: context,
+      title: 'Batalkan Izin',
+      message:
+          'Yakin ingin membatalkan pengajuan izin ini? Tindakan ini tidak dapat dibatalkan.',
+      okLabel: 'Batalkan',
+      cancelLabel: 'Kembali',
+      isDestructiveAction: true,
+    );
+    if (confirm != OkCancelResult.ok) return;
+    if (!context.mounted) return;
+    final result =
+        await ref.read(permitControllerProvider.notifier).cancelPermit(
+              key: key,
+              id: permitId,
+            );
+    if (result == null || !context.mounted) return;
+    if (result.status == true || result.status == 'true') {
+      context.showSuccessMessage(result.msg);
+      context.pop(true);
+    } else {
+      context.showErrorMessage(result.msg);
+      ref.invalidate(fetchPermitDetailProvider(key: key, id: permitId));
+    }
   }
 }

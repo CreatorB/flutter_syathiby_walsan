@@ -54,11 +54,12 @@ class HadithScreen extends HookConsumerWidget {
     }
 
     useEffect(() {
-      pagingController.addPageRequestListener((pageKey) {
+      void listener(int pageKey) {
         fetchData(pageKey, pagedSize);
-      });
-      return null;
-    }, []);
+      }
+      pagingController.addPageRequestListener(listener);
+      return () => pagingController.removePageRequestListener(listener);
+    }, [pagingController]);
 
     return Scaffold(
       appBar: AppBar(

@@ -8,7 +8,7 @@
 PRODUCT_NAME = rabbaanii_portal
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.muslimdeveloper.rabbaaniiPortal
+PRODUCT_BUNDLE_IDENTIFIER = walsan.syathiby.id
 
 // The copyright displayed in application information
 PRODUCT_COPYRIGHT = Copyright © 2024 com.muslimdeveloper. All rights reserved.

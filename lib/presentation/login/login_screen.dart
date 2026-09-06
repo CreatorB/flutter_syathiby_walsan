@@ -5,7 +5,10 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
+import 'package:rabbaanii_portal/res/env.dart';
+import 'package:rabbaanii_portal/res/flavor_config.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
@@ -27,12 +30,51 @@ class LoginScreen extends HookConsumerWidget {
     final state = ref.watch(loginControllerProvider);
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final passwordVisible = useState(false);
+    final rememberMe = useState(false);
     final phoneNumberController = useTextEditingController();
     final passwordController = useTextEditingController();
     final checkUpdateApp = useMemoized(() => _checkAppUpdate(context));
     useFuture(checkUpdateApp);
 
+    final savedPhone = useMemoized(() {
+      final pref = ref.read(sharedPreferencesHelperProvider);
+      return pref.getString(AppConstant.keySavedPhone);
+    }, []);
+
+    final savedPassword = useMemoized(() {
+      final pref = ref.read(sharedPreferencesHelperProvider);
+      return pref.getString(AppConstant.keySavedPassword);
+    }, []);
+
+    final savedRememberMe = useMemoized(() {
+      final pref = ref.read(sharedPreferencesHelperProvider);
+      return pref.getString(AppConstant.keyRememberMe) == 'true';
+    }, []);
+
+    useEffect(() {
+      if (savedRememberMe == true) {
+        if (savedPhone != null) phoneNumberController.text = savedPhone;
+        if (savedPassword != null) passwordController.text = savedPassword;
+        rememberMe.value = true;
+      } else if (FlavorConfig.isLocal) {
+        if (LocalEnv.testPhone.isNotEmpty) {
+          phoneNumberController.text = LocalEnv.testPhone;
+        }
+        if (LocalEnv.testPassword.isNotEmpty) {
+          passwordController.text = LocalEnv.testPassword;
+        }
+      }
+      return null;
+    }, []);
+
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.go('/guest-user'),
+        ),
+        title: const Text('Masuk'),
+      ),
       body: Form(
         key: formKey,
         child: Center(
@@ -44,21 +86,12 @@ class LoginScreen extends HookConsumerWidget {
               ),
               child: Column(
                 children: [
-                  Image.asset(
+Image.asset(
                     Assets.images.logo.path,
                     width: 175,
                     height: 175,
                   ),
-                  const Gap(16),
-                  const Text(
-                    AppConstant.appName,
-                    style: TextStyle(
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: FontFamily.calligrapher,
-                    ),
-                  ),
-                  const Gap(32),
+                  const Gap(24),
                   TextFormField(
                     controller: phoneNumberController,
                     keyboardType: TextInputType.phone,
@@ -101,7 +134,19 @@ class LoginScreen extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  const Gap(20),
+                  const Gap(12),
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: rememberMe.value,
+                        onChanged: (value) {
+                          rememberMe.value = value ?? false;
+                        },
+                      ),
+                      const Text('Ingat Saya'),
+                    ],
+                  ),
+                  const Gap(8),
                   FilledButton(
                     onPressed: () async {
                       if (!formKey.currentState!.validate()) {
@@ -112,6 +157,7 @@ class LoginScreen extends HookConsumerWidget {
                           .parentLogin(
                             phoneNumber: phoneNumberController.text,
                             password: passwordController.text,
+                            rememberMe: rememberMe.value,
                           );
                       if (loginResult == null || !context.mounted) return;
                       context.goNamed(AppRoute.home.name);
@@ -141,7 +187,7 @@ class LoginScreen extends HookConsumerWidget {
                     children: [
                       Transform.translate(
                         offset: const Offset(8, 0),
-                        child: const Text('Anda Wali Santri?'),
+                        child: const Text('Belum punya akun walsan?'),
                       ),
                       TextButton(
                         child: const Text('DAFTAR DISINI'),

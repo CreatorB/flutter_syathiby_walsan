@@ -1,0 +1,7 @@
+flutter_application_id:
+  android:
+    id: "walsan.syathiby.id"
+    name: "Walsan Syathiby"
+  ios:
+    id: "walsan.syathiby.id"
+    name: "Walsan Syathiby"

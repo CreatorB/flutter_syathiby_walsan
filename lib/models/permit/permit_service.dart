@@ -57,6 +57,12 @@ abstract class PermitRestInterface {
     @Query('alasan') String alasan,
   );
 
+  @GET('permit/walidecancelsantri.php')
+  Future<Message> cancelPermitSantri(
+    @Query('key') String key,
+    @Query('id') String id,
+  );
+
   @GET('permit/walilistsantri.php')
   Future<List<Permit>> getSantri(
     @Query('key') String key,
@@ -93,7 +99,7 @@ abstract class PermitRestInterface {
     @Part(name: 'detail') String detail,
     @Part(name: 'id_siswa') String studentId,
       {
-    @Part(name: 'img') File? img,
+    @Part(name: 'img', fileName: 'permit.jpg') List<int>? img,
   });
 
   @MultiPart()

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:rabbaanii_portal/models/pickup/pickup.dart';
 import 'package:rabbaanii_portal/models/service_injection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,7 +18,7 @@ class PickupController extends _$PickupController {
     required String eventId,
     required String parentName,
     required String relation,
-    File? image,
+    List<int>? image,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(
@@ -41,7 +39,7 @@ class PickupController extends _$PickupController {
     required String eventId,
     required String parentName,
     required String relation,
-    File? image,
+    List<int>? image,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(

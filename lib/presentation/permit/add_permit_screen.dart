@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -12,11 +12,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
 import 'package:rabbaanii_portal/models/permit/permit.dart';
-import 'package:rabbaanii_portal/presentation/permit/paging_permit_controller.dart';
 import 'package:rabbaanii_portal/presentation/permit/permit_controller.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
@@ -44,7 +42,7 @@ class AddPermitScreen extends HookConsumerWidget {
     final permitDate = useTextEditingController();
     final howManyDays = useTextEditingController();
     final permitDetail = useTextEditingController();
-    final imageSelected = useState<File?>(null);
+    final imageSelected = useState<Uint8List?>(null);
 
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
@@ -70,9 +68,12 @@ class AddPermitScreen extends HookConsumerWidget {
           );
 
       if (result == null || !context.mounted) return;
-      ref.invalidate(pagingPermitControllerProvider);
-      context.showSuccessMessage(result.msg);
-      context.pop(true);
+      if (result.status == 'true' || result.status == true) {
+        context.showSuccessMessage(result.msg);
+        context.pop(true);
+      } else {
+        context.showErrorMessage(result.msg);
+      }
     }
 
     return Scaffold(
@@ -83,7 +84,7 @@ class AddPermitScreen extends HookConsumerWidget {
         enabled: fetchPermitType.isLoading,
         child: RefreshIndicator(
           onRefresh: () => ref.refresh(
-            fetchPermitTypeProvider(key: key, type: 'staff').future,
+            fetchPermitTypeProvider(key: key, type: 'santri').future,
           ),
           child: ListView(
             children: [
@@ -113,7 +114,7 @@ class AddPermitScreen extends HookConsumerWidget {
                             ),
                           ),
                           image: imageSelected.value != null
-                              ? FileImage(
+                              ? MemoryImage(
                                   imageSelected.value!,
                                 ) as ImageProvider
                               : null,
@@ -188,13 +189,9 @@ class AddPermitScreen extends HookConsumerWidget {
                         onTap: () async {
                           final items = fetchPermitType.valueOrNull;
                           if (items == null) return;
-                          final selected = await showModalActionSheet<Permit>(
-                            context: context,
-                            title: 'Jenis Izin',
-                            actions: items
-                                .map((e) => SheetAction(
-                                    key: e, label: '${e.namePermit}'))
-                                .toList(),
+                          final selected = await _showPermitTypePicker(
+                            context,
+                            items,
                           );
                           if (selected == null) return;
                           permitName.text = '${selected.namePermit}';
@@ -286,7 +283,7 @@ class AddPermitScreen extends HookConsumerWidget {
     );
   }
 
-  Future<File?> _openImagePicker(
+  Future<Uint8List?> _openImagePicker(
     BuildContext context,
   ) async {
     final ImagePicker picker = ImagePicker();
@@ -319,9 +316,57 @@ class AddPermitScreen extends HookConsumerWidget {
       await image.readAsBytes(),
       quality: 10,
     );
-    final tempDir = await getTemporaryDirectory();
-    File file = await File('${tempDir.path}/${DateTime.timestamp()}').create();
-    file.writeAsBytesSync(imageCompressed);
-    return file;
+    return Uint8List.fromList(imageCompressed);
+  }
+
+  Future<Permit?> _showPermitTypePicker(
+    BuildContext context,
+    List<Permit> items,
+  ) {
+    return showModalBottomSheet<Permit>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          minChildSize: 0.3,
+          maxChildSize: 0.9,
+          expand: false,
+          builder: (_, scrollController) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  child: Text(
+                    'Jenis Izin',
+                    style: Theme.of(sheetContext).textTheme.titleMedium,
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: ListView.separated(
+                    controller: scrollController,
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) => const Divider(height: 1),
+                    itemBuilder: (_, index) {
+                      final item = items[index];
+                      return ListTile(
+                        title: Text('${item.namePermit}'),
+                        onTap: () => Navigator.of(sheetContext).pop(item),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
