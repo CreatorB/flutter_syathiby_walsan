@@ -24,15 +24,15 @@ abstract class SiswaRestInterface {
   @GET('siswa/rekapsiswa.php')
   Future<List<Rekap>> getStudentRecap(
     @Query('key') String key,
-    @Query('awal') String startDate,
-    @Query('akhir') String endDate,
+    @Query('tanggal_awal') String startDate,
+    @Query('tanggal_akhir') String endDate,
   );
 
-  @GET('siswa/aktivitassiswa.php')
+  @GET('siswa/rekapsiswa.php')
   Future<List<Rekap>> getStudentActivity(
       @Query('key') String key,
-      @Query('awal') String startDate,
-      @Query('akhir') String endDate,
+      @Query('tanggal_awal') String startDate,
+      @Query('tanggal_akhir') String endDate,
       );
 
   @GET('siswa/nilaiwali.php')

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,7 +10,6 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
 import 'package:rabbaanii_portal/models/user/user.dart';
@@ -37,7 +36,7 @@ class AccountScreen extends HookConsumerWidget {
     final phoneNumber = useTextEditingController();
     final address = useTextEditingController();
     final imageSelected =
-        useState<(File? localFile, String? imageUrl)>((null, null));
+        useState<(Uint8List? localBytes, String? imageUrl)>((null, null));
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
     void setProfile(User? user) {
@@ -109,7 +108,7 @@ class AccountScreen extends HookConsumerWidget {
                             size: 100,
                             autoTextSize: true,
                             image: imageSelected.value.$1 != null
-                                ? FileImage(
+                                ? MemoryImage(
                                     imageSelected.value.$1!,
                                   ) as ImageProvider
                                 : CachedNetworkImageProvider(
@@ -199,7 +198,7 @@ class AccountScreen extends HookConsumerWidget {
     );
   }
 
-  Future<File?> _openImagePicker(
+  Future<Uint8List?> _openImagePicker(
     BuildContext context,
   ) async {
     final ImagePicker picker = ImagePicker();
@@ -232,9 +231,6 @@ class AccountScreen extends HookConsumerWidget {
       await image.readAsBytes(),
       quality: 10,
     );
-    final tempDir = await getTemporaryDirectory();
-    File file = await File('${tempDir.path}/${DateTime.timestamp()}').create();
-    file.writeAsBytesSync(imageCompressed);
-    return file;
+    return Uint8List.fromList(imageCompressed);
   }
 }

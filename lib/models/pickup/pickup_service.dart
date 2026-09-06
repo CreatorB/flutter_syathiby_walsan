@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/pickup/pickup.dart';
@@ -39,7 +37,7 @@ abstract class PenjemputanRestInterface {
     @Part(name: 'id_event') String eventId,
     @Part(name: 'nama_penjemput') String parentName,
     @Part(name: 'hubungan') String relation, {
-    @Part(name: 'img') File? file,
+    @Part(name: 'img', fileName: 'pickup.jpg') List<int>? file,
   });
 
   @POST('editpenjemput.php')
@@ -49,7 +47,7 @@ abstract class PenjemputanRestInterface {
     @Part(name: 'id_event') String eventId,
     @Part(name: 'nama_penjemput') String parentName,
     @Part(name: 'hubungan') String relation, {
-    @Part(name: 'img') File? file,
+    @Part(name: 'img', fileName: 'pickup.jpg') List<int>? file,
   });
 
   @GET('listsiswanegative.php')

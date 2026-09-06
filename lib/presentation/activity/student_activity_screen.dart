@@ -151,7 +151,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.jumlahMapel} mata pelajaran',
+                  '${recap?.jumlahMapel ?? 0} mata pelajaran',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -165,7 +165,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.hadirPelajaran} kali',
+                  '${recap?.hadirPelajaran ?? 0} kali',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -179,7 +179,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.izinPelajaran} kali',
+                  '${recap?.izinPelajaran ?? 0} kali',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -193,7 +193,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.sakitPelajaran} kali',
+                  '${recap?.sakitPelajaran ?? 0} kali',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -207,7 +207,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.alfaPelajaran} kali',
+                  '${recap?.alfaPelajaran ?? 0} kali',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -248,7 +248,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.tahfidzSubuh}',
+                  '${recap?.tahfidzSubuh ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -262,7 +262,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.tahfidzdhuha}',
+                  '${recap?.tahfidzdhuha ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -276,7 +276,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.tahfidzSiang}',
+                  '${recap?.tahfidzSiang ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -290,7 +290,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.tahfidzMalam}',
+                  '${recap?.tahfidzMalam ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -331,7 +331,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.makanPagi}',
+                  '${recap?.makanPagi ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -345,7 +345,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.makanSiang}',
+                  '${recap?.makanSiang ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -359,7 +359,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.makanMalam}',
+                  '${recap?.makanMalam ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -400,7 +400,7 @@ class StudentActivityScreen extends HookConsumerWidget {
                   style: context.bodyMedium,
                 ),
                 Text(
-                  '${recap?.tidur}',
+                  '${recap?.tidur ?? '-'}',
                   style: context.bodyMediumBold,
                 ),
               ],
@@ -458,11 +458,11 @@ class StudentActivityScreen extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${recap?.namaLengkap}',
+                          '${recap?.namaLengkap ?? '-'}',
                           style: context.bodyMedium,
                         ),
                         Text(
-                          '${recap?.hadirPelajaran}',
+                          '${recap?.hadirPelajaran ?? 0}',
                           style: context.bodyMediumBold,
                         ),
                       ],
