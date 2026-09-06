@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:dropdown_search/dropdown_search.dart';
@@ -12,7 +12,6 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
 import 'package:rabbaanii_portal/models/permit/permit.dart';
@@ -43,7 +42,7 @@ class AddPermitScreen extends HookConsumerWidget {
     final permitDate = useTextEditingController();
     final howManyDays = useTextEditingController();
     final permitDetail = useTextEditingController();
-    final imageSelected = useState<File?>(null);
+    final imageSelected = useState<Uint8List?>(null);
 
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
 
@@ -115,7 +114,7 @@ class AddPermitScreen extends HookConsumerWidget {
                             ),
                           ),
                           image: imageSelected.value != null
-                              ? FileImage(
+                              ? MemoryImage(
                                   imageSelected.value!,
                                 ) as ImageProvider
                               : null,
@@ -284,7 +283,7 @@ class AddPermitScreen extends HookConsumerWidget {
     );
   }
 
-  Future<File?> _openImagePicker(
+  Future<Uint8List?> _openImagePicker(
     BuildContext context,
   ) async {
     final ImagePicker picker = ImagePicker();
@@ -317,10 +316,7 @@ class AddPermitScreen extends HookConsumerWidget {
       await image.readAsBytes(),
       quality: 10,
     );
-    final tempDir = await getTemporaryDirectory();
-    File file = await File('${tempDir.path}/${DateTime.timestamp()}').create();
-    file.writeAsBytesSync(imageCompressed);
-    return file;
+    return Uint8List.fromList(imageCompressed);
   }
 
   Future<Permit?> _showPermitTypePicker(

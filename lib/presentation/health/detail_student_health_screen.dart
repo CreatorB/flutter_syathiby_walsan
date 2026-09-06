@@ -147,9 +147,9 @@ class DetailStudentHealthScreen extends HookConsumerWidget {
                         'Detail Penanganan',
                         '${studentHealth.penanganan}',
                       ),
-                      _buildDetailItem(
-                        'Jumlah Waktu Istirahat',
-                        '${studentHealth.istirahat}',
+_buildDetailItem(
+                        'Waktu Istirahat',
+                        '${studentHealth.istirahatRange ?? '-'}',
                       ),
                       _buildDetailItem(
                         'Perlu Dijemput Orang Tua',
@@ -162,13 +162,29 @@ class DetailStudentHealthScreen extends HookConsumerWidget {
                         '${studentHealth.staff}',
                       ),
                       const SizedBox(height: 4.0),
-                      CachedNetworkImage(
-                        imageUrl: '${studentHealth.img}',
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) =>
-                            const Text('Tidak ada foto'),
-                      ),
+                      Builder(builder: (context) {
+                        final img = studentHealth.img;
+                        final hasImg = img != null && img.isNotEmpty && img != 'null';
+                        if (!hasImg) {
+                          return Container(
+                            width: double.infinity,
+                            height: 200,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text('Tidak ada foto'),
+                          );
+                        }
+                        return CachedNetworkImage(
+                          imageUrl: img,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) =>
+                              const Text('Tidak ada foto'),
+                        );
+                      }),
                       // Provide your image path here
                       const SizedBox(height: 16.0),
                     ],

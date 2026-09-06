@@ -1,7 +1,7 @@
 flutter_application_id:
   android:
-    id: "id.syathiby.walsan"
+    id: "walsan.syathiby.id"
     name: "Walsan Syathiby"
   ios:
-    id: "id.syathiby.walsan"
+    id: "walsan.syathiby.id"
     name: "Walsan Syathiby"

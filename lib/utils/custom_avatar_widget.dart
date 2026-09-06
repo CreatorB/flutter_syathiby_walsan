@@ -23,7 +23,11 @@ class CustomAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageUrl.isEmpty || imageUrl.trim().isEmpty) {
+    // Robust null/empty check — handle Dart null (via toString 'null') and literal 'null'/'undefined'
+    if (imageUrl.isEmpty ||
+        imageUrl.trim().isEmpty ||
+        imageUrl == 'null' ||
+        imageUrl.trim() == 'null') {
       return _buildFallbackAvatar(context);
     }
 

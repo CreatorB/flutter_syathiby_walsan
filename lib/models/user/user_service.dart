@@ -113,7 +113,7 @@ abstract class UserService {
     @Part(name: 'email') String email,
     @Part(name: 'phone_number') String phoneNumber,
     @Part(name: 'address') String address, {
-    @Part(name: 'img') File? file,
+    @Part(name: 'img', fileName: 'profile.jpg') List<int>? file,
   });
 
   @POST('settings/updatepassword.php')

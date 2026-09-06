@@ -28,7 +28,7 @@ abstract class SiswaRestInterface {
     @Query('tanggal_akhir') String endDate,
   );
 
-  @GET('siswa/aktivitassiswa.php')
+  @GET('siswa/rekapsiswa.php')
   Future<List<Rekap>> getStudentActivity(
       @Query('key') String key,
       @Query('tanggal_awal') String startDate,

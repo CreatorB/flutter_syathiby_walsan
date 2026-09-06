@@ -99,7 +99,7 @@ abstract class PermitRestInterface {
     @Part(name: 'detail') String detail,
     @Part(name: 'id_siswa') String studentId,
       {
-    @Part(name: 'img') File? img,
+    @Part(name: 'img', fileName: 'permit.jpg') List<int>? img,
   });
 
   @MultiPart()
