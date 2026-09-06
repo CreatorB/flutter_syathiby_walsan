@@ -22,8 +22,10 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Redirect HTTP ke HTTPS
-  RewriteCond %{HTTPS} off
+  # Redirect HTTP ke HTTPS (skip kalau Nginx/Cloudflare kirim X-Forwarded-Proto=https,
+  # karena %{HTTPS} di Apache selalu off di belakang reverse-proxy SSL-terminator)
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # Flutter web SPA routing - arahkan semua ke index.html
