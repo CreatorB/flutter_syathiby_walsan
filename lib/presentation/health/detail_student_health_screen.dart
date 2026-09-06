@@ -31,80 +31,169 @@ class DetailStudentHealthScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: const Text('Detail Penanganan'),
       ),
-      body: Skeletonizer(
-        enabled: fetchDetailStudentHealth.isLoading,
-        child: RefreshIndicator(
-          onRefresh: () => ref.refresh(
-            fetchStudentHealthDetailProvider(
-              key: key,
-              id: studentHealthId,
-            ).future,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      '${studentHealth?.nama_siswa}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20.0,
-                      ),
-                      textAlign: TextAlign.center,
+      body: fetchDetailStudentHealth.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, stack) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline, size: 48.0),
+                const SizedBox(height: 12.0),
+                Text(
+                  'Gagal memuat detail penanganan',
+                  style: Theme.of(context).textTheme.titleMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  '$error',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 16.0),
+                ElevatedButton.icon(
+                  onPressed: () => ref.invalidate(
+                    fetchStudentHealthDetailProvider(
+                      key: key,
+                      id: studentHealthId,
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  _buildDetailItem(
-                    'Kelas',
-                    '${studentHealth?.kelas}',
-                  ),
-                  _buildDetailItem('Diagnosa', '${studentHealth?.diagnosa}'),
-                  _buildDetailItem(
-                    'Tanggal Pemeriksaan',
-                    '$dateFormat',
-                  ),
-                  _buildDetailItem(
-                    'Jam Pemeriksaan',
-                    '${studentHealth?.hour}',
-                  ),
-                  _buildDetailItem(
-                      'Keluhan Siswa', '${studentHealth?.keluhan}'),
-                  _buildDetailItem(
-                    'Detail Penanganan',
-                    '${studentHealth?.penanganan}',
-                  ),
-                  _buildDetailItem(
-                    'Jumlah Waktu Istirahat',
-                    '${studentHealth?.istirahat}',
-                  ),
-                  _buildDetailItem(
-                    'Perlu Dijemput Orang Tua',
-                    '${studentHealth?.dijemput}',
-                  ),
-                  _buildDetailItem('Informasi Untuk Orang Tua',
-                      '${studentHealth?.info_ortu}'),
-                  _buildDetailItem(
-                    'Yang Menangani',
-                    '${studentHealth?.staff}',
-                  ),
-                  const SizedBox(height: 4.0),
-                  CachedNetworkImage(
-                    imageUrl: '${studentHealth?.img}',
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorWidget: (context, url, error) =>
-                        const Text('Tidak ada foto'),
-                  ),
-                  // Provide your image path here
-                  const SizedBox(height: 16.0),
-                ],
-              ),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Coba lagi'),
+                ),
+              ],
             ),
           ),
         ),
+        data: (data) {
+          if (studentHealth == null) {
+            return RefreshIndicator(
+              onRefresh: () => ref.refresh(
+                fetchStudentHealthDetailProvider(
+                  key: key,
+                  id: studentHealthId,
+                ).future,
+              ),
+              child: ListView(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.info_outline, size: 48.0),
+                        const SizedBox(height: 12.0),
+                        Text(
+                          'Data penanganan tidak ditemukan',
+                          style: Theme.of(context).textTheme.titleMedium,
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8.0),
+                        Text(
+                          'Kemungkinan catatan kesehatan ini bukan untuk anak Anda, atau sudah dihapus.',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          return Skeletonizer(
+            enabled: false,
+            child: RefreshIndicator(
+              onRefresh: () => ref.refresh(
+                fetchStudentHealthDetailProvider(
+                  key: key,
+                  id: studentHealthId,
+                ).future,
+              ),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          '${studentHealth.nama_siswa}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                      _buildDetailItem(
+                        'Kelas',
+                        '${studentHealth.kelas}',
+                      ),
+                      _buildDetailItem('Diagnosa', '${studentHealth.diagnosa}'),
+                      _buildDetailItem(
+                        'Tanggal Pemeriksaan',
+                        '$dateFormat',
+                      ),
+                      _buildDetailItem(
+                        'Jam Pemeriksaan',
+                        '${studentHealth.hour}',
+                      ),
+                      _buildDetailItem(
+                          'Keluhan Siswa', '${studentHealth.keluhan}'),
+                      _buildDetailItem(
+                        'Detail Penanganan',
+                        '${studentHealth.penanganan}',
+                      ),
+_buildDetailItem(
+                        'Waktu Istirahat',
+                        '${studentHealth.istirahatRange ?? '-'}',
+                      ),
+                      _buildDetailItem(
+                        'Perlu Dijemput Orang Tua',
+                        '${studentHealth.dijemput}',
+                      ),
+                      _buildDetailItem('Informasi Untuk Orang Tua',
+                          '${studentHealth.info_ortu}'),
+                      _buildDetailItem(
+                        'Yang Menangani',
+                        '${studentHealth.staff}',
+                      ),
+                      const SizedBox(height: 4.0),
+                      Builder(builder: (context) {
+                        final img = studentHealth.img;
+                        final hasImg = img != null && img.isNotEmpty && img != 'null';
+                        if (!hasImg) {
+                          return Container(
+                            width: double.infinity,
+                            height: 200,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text('Tidak ada foto'),
+                          );
+                        }
+                        return CachedNetworkImage(
+                          imageUrl: img,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) =>
+                              const Text('Tidak ada foto'),
+                        );
+                      }),
+                      // Provide your image path here
+                      const SizedBox(height: 16.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

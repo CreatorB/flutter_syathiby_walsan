@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "buildNumber": "1",
+  "buildDate": "2026-07-27",
+  "name": "Walsan",
+  "packageName": "rabbaanii_portal",
+  "baseHref": "/",
+  "features": [
+    "Initial Flutter web deployment for walsan.syathiby.id",
+    "Served from root via subdomain (NOT subpath like staff app /web/)",
+    "API endpoint same as staff app: https://aplikasi.syathiby.id/geten/",
+    "CORS handled by env_loader.php via APP_PRODUCTION_ORIGINS",
+    "Firebase project: rabbaniiapps (sender 859044680272)"
+  ]
+}

@@ -20,6 +20,9 @@ class Kesehatan with _$Kesehatan {
     @JsonKey(name: 'dijemput') String? dijemput,
     @JsonKey(name: 'diagnosa') String? diagnosa,
     @JsonKey(name: 'istirahat') String? istirahat,
+    @JsonKey(name: 'istirahat_mulai') String? istirahatMulai,
+    @JsonKey(name: 'istirahat_selesai') String? istirahatSelesai,
+    @JsonKey(name: 'istirahat_range') String? istirahatRange,
     @JsonKey(name: 'info_ortu') String? info_ortu,
     @JsonKey(name: 'jumlahsakit') int? totalSick,
   }) = _Kesehatan;

@@ -23,6 +23,8 @@ abstract class Permit with _$Permit {
     String? kabag,
     String? alasan,
     String? aproval,
+    @JsonKey(name: 'tap_keluar') String? tapKeluar,
+    @JsonKey(name: 'tap_masuk') String? tapMasuk,
   }) = _Permit;
 
   factory Permit.fromJson(Map<String, dynamic> json) => _$PermitFromJson(json);

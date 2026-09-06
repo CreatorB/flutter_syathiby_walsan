@@ -1,15 +1,44 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rabbaanii_portal/di/providers.dart';
+import 'package:rabbaanii_portal/res/strings.dart';
+import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/rest_exception.dart';
 import 'package:toastification/toastification.dart';
 
+void _clearSessionAndRedirectToLogin(BuildContext context) {
+  final container = ProviderScope.containerOf(context);
+  final pref = container.read(sharedPreferencesHelperProvider);
+  pref.remove(AppConstant.keyLoginSession);
+  pref.remove(AppConstant.keyRememberMe);
+  pref.remove(AppConstant.keySavedPhone);
+  pref.remove(AppConstant.keySavedPassword);
+  context.goNamed(AppRoute.login.name);
+}
+
 /// A helper [AsyncValue] extension to show an alert dialog on error
 extension AsyncValueUI on AsyncValue {
   void showToastOnError(BuildContext context) {
     if (!isLoading && hasError) {
+      final errorToCheck = error;
+      if (errorToCheck is DioException) {
+        final dioError = errorToCheck.error;
+        if (dioError is SessionExpiredException) {
+          _clearSessionAndRedirectToLogin(context);
+          return;
+        }
+        if (errorToCheck.type == DioExceptionType.connectionTimeout ||
+            errorToCheck.type == DioExceptionType.receiveTimeout ||
+            errorToCheck.type == DioExceptionType.sendTimeout ||
+            errorToCheck.type == DioExceptionType.connectionError) {
+          _clearSessionAndRedirectToLogin(context);
+          return;
+        }
+      }
       toastification.show(
         context: context,
         title: Text(_errorMessage(error)),

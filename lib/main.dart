@@ -1,23 +1,30 @@
 import 'dart:ui';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:rabbaanii_portal/app.dart';
-import 'package:rabbaanii_portal/utils/firebase_options.dart';
+import 'package:rabbaanii_portal/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'di/providers.dart';
 
 SharedPreferences? globalPrefs;
+final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await _initFirebase();
+  // TEMP: Firebase init disabled for debugging Flutter web blank hitam.
+  // Skip Firebase on web build (kIsWeb) since DefaultFirebaseOptions web
+  // config may not be available in this build environment.
+  if (!kIsWeb) {
+    await _initFirebase();
+  }
   globalPrefs = await SharedPreferences.getInstance();
   final currentTheme = await AdaptiveTheme.getThemeMode();
   final container = await _bootstrap(skipAudio: true);

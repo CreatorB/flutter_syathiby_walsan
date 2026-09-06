@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../home/menu_home.dart';
 import '../webview/chrome_safari_browser.dart';
@@ -133,6 +135,13 @@ class PrayerScreen extends HookConsumerWidget {
   }
 
   void openMaps() async {
+    if (kIsWeb) {
+      await launchUrl(
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=masjid+terdekat'),
+        mode: LaunchMode.externalApplication,
+      );
+      return;
+    }
     final browser = MyChromeSafariBrowser();
     await browser.open(
       url: WebUri(

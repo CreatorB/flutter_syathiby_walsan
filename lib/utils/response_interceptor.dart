@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:rabbaanii_portal/models/response_entity.dart';
 import 'package:rabbaanii_portal/utils/rest_exception.dart';
 
+const String _sessionExpiredMessage = 'Sesi tidak valid atau telah kadaluarsa';
+
 class ResponseInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
@@ -59,6 +61,9 @@ class ResponseInterceptor extends Interceptor {
               debugPrint('[ResponseInterceptor] Empty data case - returning empty list');
               response.data = responseData.data ?? [];
               handler.next(response);
+            } else if (responseData.msg == _sessionExpiredMessage) {
+              debugPrint('[ResponseInterceptor] Session expired - throwing SessionExpiredException');
+              throw SessionExpiredException(_sessionExpiredMessage);
             } else {
               throw RestException(responseData.msg ?? 'Error', responseData.errCode ?? '02');
             }
@@ -99,6 +104,9 @@ class ResponseInterceptor extends Interceptor {
               if (responseData.msg == 'no data' || responseData.msg == 'No data') {
                 response.data = responseData.data ?? [];
                 handler.next(response);
+              } else if (responseData.msg == _sessionExpiredMessage) {
+                debugPrint('[ResponseInterceptor] Session expired - throwing SessionExpiredException');
+                throw SessionExpiredException(_sessionExpiredMessage);
               } else {
                 throw RestException(responseData.msg ?? 'Error', responseData.errCode ?? '02');
               }
@@ -122,7 +130,17 @@ class ResponseInterceptor extends Interceptor {
       }
     } catch (e) {
       debugPrint('[ResponseInterceptor] CAUGHT EXCEPTION: $e (type: ${e.runtimeType})');
-      if (e is RestException) {
+      if (e is SessionExpiredException) {
+        debugPrint('[ResponseInterceptor] SessionExpiredException - rejecting with DioException');
+        handler.reject(
+          DioException(
+            requestOptions: response.requestOptions,
+            response: response,
+            type: DioExceptionType.badResponse,
+            error: e,
+          ),
+        );
+      } else if (e is RestException) {
         debugPrint('[ResponseInterceptor] RestException - rejecting with DioException');
         handler.reject(
           DioException(

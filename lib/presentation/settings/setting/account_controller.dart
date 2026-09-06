@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/service_injection.dart';
 import 'package:rabbaanii_portal/models/user/user.dart';
@@ -19,7 +17,7 @@ class AccountController extends _$AccountController {
     required String email,
     required String phoneNumber,
     required String address,
-    File? file,
+    List<int>? file,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(

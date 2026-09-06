@@ -100,7 +100,7 @@ class TahfidzActivityScreen extends HookConsumerWidget {
       body: RefreshIndicator(
         onRefresh: () {
           return ref.refresh(
-            fetchSchoolSheduleProvider(key: key, date: formattedDate).future,
+            fetchTahfidzHistoryProvider(key: key, date: formattedDate).future,
           );
         },
         child: Skeletonizer(

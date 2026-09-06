@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' show Platform;
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart' hide Store;
 import 'package:go_router/go_router.dart';
@@ -659,7 +660,7 @@ class HomeScreen extends HookConsumerWidget {
       context: context,
       title: 'Ubah Akun Santri',
       cancelLabel: 'Tambah Akun Santri',
-      builder: (context, child) => Platform.isAndroid
+      builder: (context, child) => !kIsWeb && Platform.isAndroid
           ? IntrinsicHeight(
               child: Column(
                 children: [

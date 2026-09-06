@@ -54,6 +54,9 @@ import '../presentation/prayer/prayer_screen.dart';
 import '../presentation/prayer/prayer_time_screen.dart';
 import '../presentation/prayer/qibla_compass_screen.dart';
 import '../presentation/prayer/surah_screen.dart';
+import '../presentation/privacy_policy/about_us_screen.dart';
+import '../presentation/privacy_policy/agreement_screen.dart';
+import '../presentation/privacy_policy/privacy_policy_screen.dart';
 import '../presentation/score/student_score_detail_screen.dart';
 import '../presentation/tv/tv_screen.dart';
 import '../presentation/webview/webview_screen.dart';
@@ -97,6 +100,9 @@ enum AppRoute {
   privacyPolicy,
   aboutUs,
   agreement,
+  settingsPrivacyPolicy,
+  settingsAgreement,
+  settingsAboutUs,
   detailPermit,
   addPermit,
   addStudentPermit,
@@ -146,6 +152,10 @@ GoRouter goRouter(GoRouterRef ref) {
     redirect: (context, state) async {
       final goingToLogin = state.matchedLocation.startsWith('/login');
       final goingToGuest = state.matchedLocation.contains('/guest-');
+      final goingToPublic =
+          state.matchedLocation.startsWith('/privacy-policy') ||
+              state.matchedLocation.startsWith('/agreement') ||
+              state.matchedLocation.startsWith('/about-us');
 
       Map<String, dynamic>? session;
       try {
@@ -160,6 +170,10 @@ GoRouter goRouter(GoRouterRef ref) {
       final isLoggedIn = sessionKey != null &&
           sessionKey.isNotEmpty &&
           sessionKey.toLowerCase() != 'null';
+
+      if (goingToPublic) {
+        return null;
+      }
 
       if (!isLoggedIn) {
         if (goingToGuest || goingToLogin) {
@@ -530,33 +544,39 @@ GoRouter goRouter(GoRouterRef ref) {
                   ),
                   GoRoute(
                     path: 'privacy-policy',
-                    name: AppRoute.privacyPolicy.name,
-                    builder: (context, state) => WebViewScreen(
-                      title: state.uri.queryParameters['title'],
-                      url: state.uri.queryParameters['url'],
-                    ),
+                    name: AppRoute.settingsPrivacyPolicy.name,
+                    builder: (context, state) => const PrivacyPolicyScreen(),
                   ),
                   GoRoute(
                     path: 'agreement',
-                    name: AppRoute.agreement.name,
-                    builder: (context, state) => WebViewScreen(
-                      title: state.uri.queryParameters['title'],
-                      url: state.uri.queryParameters['url'],
-                    ),
+                    name: AppRoute.settingsAgreement.name,
+                    builder: (context, state) => const AgreementScreen(),
                   ),
                   GoRoute(
                     path: 'about-us',
-                    name: AppRoute.aboutUs.name,
-                    builder: (context, state) => WebViewScreen(
-                      title: state.uri.queryParameters['title'],
-                      url: state.uri.queryParameters['url'],
-                    ),
+                    name: AppRoute.settingsAboutUs.name,
+                    builder: (context, state) => const AboutUsScreen(),
                   ),
                 ],
               ),
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/privacy-policy',
+        name: AppRoute.privacyPolicy.name,
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+      GoRoute(
+        path: '/agreement',
+        name: AppRoute.agreement.name,
+        builder: (context, state) => const AgreementScreen(),
+      ),
+      GoRoute(
+        path: '/about-us',
+        name: AppRoute.aboutUs.name,
+        builder: (context, state) => const AboutUsScreen(),
       ),
       GoRoute(
         path: '/login',

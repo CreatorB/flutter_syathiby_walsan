@@ -1,8 +1,5 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
-    id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
@@ -29,7 +26,7 @@ if (flutterVersionName == null) {
 def mapsApiKey = System.getenv("MAPS_API_KEY") ?: localProperties.getProperty("MAPS_API_KEY") ?: ""
 
 android {
-    namespace = "id.syathiby.walsan"
+    namespace = "walsan.syathiby.id"
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
@@ -43,13 +40,12 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "id.syathiby.walsan"
+        applicationId = "walsan.syathiby.id"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode
+        minSdk = flutter.minSdkVersion
+        targetSdk = 35
+        versionCode = flutterVersionCode.toInteger().toInteger().toInteger().toInteger()
         versionName = flutterVersionName
         manifestPlaceholders = [MAPS_API_KEY: mapsApiKey]
     }
@@ -62,6 +58,7 @@ minSdk = flutter.minSdkVersion
         }
         local {
             dimension "env"
+            applicationId = "local.walsan.syathiby.id"
             versionNameSuffix = "-local"
             manifestPlaceholders["appLabel"] = "Walsan LOCAL"
         }

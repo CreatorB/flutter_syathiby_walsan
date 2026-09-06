@@ -15,3 +15,9 @@ class RestException implements Exception {
   static const int CODE_ERROR_UNKNOWN = 999;
   static const int CODE_USER_NOT_FOUND = 0;
 }
+
+class SessionExpiredException implements Exception {
+  final String message;
+
+  SessionExpiredException([this.message = 'Sesi tidak valid atau telah kadaluarsa']);
+}

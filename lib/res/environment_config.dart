@@ -6,23 +6,57 @@ class EnvironmentConfig {
   static const String _keyLinkBase = 'debug_link_base';
 
   static String get baseUrl {
-    return globalPrefs?.getString(_keyBaseUrl) ?? FlavorConfig.apiUrl;
+    final cached = globalPrefs?.getString(_keyBaseUrl);
+    if (cached != null && cached.isNotEmpty) {
+      // Validate cached URL: only use it if its "environment type"
+      // (local vs public) matches the current host environment.
+      // Otherwise fall back to the compile-time default to avoid
+      // pointing production builds at unreachable local IPs.
+      final cachedIsLocal = _isLocalUrl(cached);
+      if (cachedIsLocal == isLocalEnvironment) {
+        return cached;
+      }
+    }
+    return FlavorConfig.apiUrl;
   }
 
   static String get linkBase {
-    return globalPrefs?.getString(_keyLinkBase) ?? FlavorConfig.mainUrl;
+    final cached = globalPrefs?.getString(_keyLinkBase);
+    if (cached != null && cached.isNotEmpty) {
+      final cachedIsLocal = _isLocalUrl(cached);
+      if (cachedIsLocal == isLocalEnvironment) {
+        return cached;
+      }
+    }
+    return FlavorConfig.mainUrl;
   }
 
   static bool get isLocalEnvironment {
-    final normalizedUrl = baseUrl.toLowerCase();
-    final uri = Uri.tryParse(normalizedUrl);
-    final host = uri?.host ?? normalizedUrl;
+    // Check the actual host the app is served from (Uri.base) rather than
+    // calling baseUrl — this avoids mutual recursion with baseUrl/getter.
+    String host;
+    try {
+      host = Uri.base.host.toLowerCase();
+    } catch (_) {
+      host = '';
+    }
 
     if (host == 'localhost' || host == '127.0.0.1') return true;
     if (host.startsWith('192.168.')) return true;
     if (host.startsWith('10.')) return true;
     if (RegExp(r'^172\.(1[6-9]|2\d|3[0-1])\.').hasMatch(host)) return true;
 
+    return false;
+  }
+
+  static bool _isLocalUrl(String url) {
+    final uri = Uri.tryParse(url);
+    final host = uri?.host ?? '';
+    if (host.isEmpty) return false;
+    if (host == 'localhost' || host == '127.0.0.1') return true;
+    if (host.startsWith('192.168.')) return true;
+    if (host.startsWith('10.')) return true;
+    if (RegExp(r'^172\.(1[6-9]|2\d|3[0-1])\.').hasMatch(host)) return true;
     return false;
   }
 

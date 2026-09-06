@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,6 @@ import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
@@ -42,7 +41,7 @@ class PickupRegistrationScreen extends HookConsumerWidget {
     final activityController = ref.watch(pickupControllerProvider);
     final parentName = useTextEditingController();
     final relation = useTextEditingController();
-    final imageSelected = useState<(File? localFile, String? imageUrl)>(
+    final imageSelected = useState<(Uint8List? localBytes, String? imageUrl)>(
       (null, null),
     );
 
@@ -136,7 +135,7 @@ class PickupRegistrationScreen extends HookConsumerWidget {
                             ),
                           ),
                           image: imageSelected.value.$1 != null
-                              ? FileImage(
+                              ? MemoryImage(
                                   imageSelected.value.$1!,
                                 ) as ImageProvider
                               : NetworkImage('${imageSelected.value.$2}'),
@@ -207,7 +206,7 @@ class PickupRegistrationScreen extends HookConsumerWidget {
     );
   }
 
-  Future<File?> _openImagePicker(
+  Future<Uint8List?> _openImagePicker(
     BuildContext context,
   ) async {
     final ImagePicker picker = ImagePicker();
@@ -217,9 +216,6 @@ class PickupRegistrationScreen extends HookConsumerWidget {
       await image.readAsBytes(),
       quality: 10,
     );
-    final tempDir = await getTemporaryDirectory();
-    File file = await File('${tempDir.path}/${DateTime.timestamp()}').create();
-    file.writeAsBytesSync(imageCompressed);
-    return file;
+    return Uint8List.fromList(imageCompressed);
   }
 }
