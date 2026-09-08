@@ -14,6 +14,32 @@
     Header set Pragma "no-cache"
     Header set Expires "0"
   </FilesMatch>
+
+  # CRITICAL (ditambah 8 Sep 2026): entry point Flutter TIDAK ber-hash nama file.
+  #
+  # Aturan `ExpiresByType application/javascript "access plus 1 year"` di bawah
+  # diberi komentar "they have hash in filename" -- itu BENAR untuk aset di
+  # assets/ dan canvaskit/, tapi SALAH untuk berkas berikut yang namanya tetap
+  # sama di setiap build. Akibatnya Cloudflare menyimpannya 1 tahun.
+  #
+  # Terbukti 8 Sep 2026: `main.dart.js` di walsan.syathiby.id disajikan dari
+  # cache edge Cloudflare bertanggal 1 Sep (cf-cache-status: HIT, Age: 542657
+  # detik = 6,3 hari) padahal berkas di server sudah diperbarui 6 Sep. Deploy
+  # 6 Sep TIDAK PERNAH SAMPAI ke pengguna, dan tanpa perbaikan ini deploy
+  # berikutnya pun tidak akan sampai.
+  #
+  # `flutter_bootstrap.js` memang diberi `?v=` manual di index.html, tapi berkas
+  # yang dimuatnya (`main.dart.js`) tidak -- jadi bootstrap ikut baru sementara
+  # isi aplikasinya tetap lama. Justru kombinasi paling menyesatkan saat debug.
+  # Blok ini disalin PERSIS dari apps/flutter_syathiby/web/.htaccess baris 89,
+  # yang sudah terbukti bekerja: main.dart.js di aplikasi.syathiby.id/web/
+  # dilaporkan `cf-cache-status: DYNAMIC` (tidak di-cache edge), sedangkan
+  # walsan `HIT` dengan umur 6,3 hari. Walsan tidak pernah ikut diperbaiki.
+  <FilesMatch "^(main\.dart\.js|flutter_service_worker\.js|flutter_bootstrap\.js|flutter\.js)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
 </IfModule>
 
 # ==========================================================
