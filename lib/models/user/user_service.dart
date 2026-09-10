@@ -124,12 +124,22 @@ abstract class UserService {
     @Field('new_password') String newPassword,
   );
 
+  // `phone_number` ditambahkan 10 Sep 2026.
+  //
+  // Kunci sesi walsan menandai SANTRI, bukan wali, dan dipakai bersama oleh
+  // seluruh wali santri yang sama. Tanpa nomor ini server harus menebak siapa
+  // yang menelepon -- dan tebakannya (kolom lama `siswa.no_wali`) membuat ibu
+  // yang mengganti kata sandinya sendiri justru mengganti kata sandi AYAH.
+  //
+  // Sisi server tetap menerima permintaan tanpa nomor ini (dicocokkan lewat kata
+  // sandi lama), jadi aplikasi versi lama tidak rusak.
   @POST('settings/updatepasswordwali.php')
   @FormUrlEncoded()
   Future<Message> changePasswordParent(
     @Field('key') String key,
     @Field('old_password') String oldPassword,
     @Field('new_password') String newPassword,
+    @Field('phone_number') String phoneNumber,
   );
 
   @POST('profile/pendaftaranwalisiswa.php')
