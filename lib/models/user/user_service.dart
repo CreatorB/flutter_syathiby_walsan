@@ -19,9 +19,16 @@ abstract class UserService {
   @GET('profile/dataaccountwali.php')
   Future<List<User>> getProfile(@Query('key') String key);
 
+  // `phone_number` ditambahkan 10 Sep 2026.
+  //
+  // Kunci sesi hanya menandai SANTRI dan dipakai bersama seluruh walinya, jadi
+  // tanpa nomor ini server tidak dapat tahu wali mana yang membuka menu Akun --
+  // ia akan menampilkan nama, nomor, dan email wali LAIN. Layar Ubah Profil
+  // terisi dari sini, sehingga menyimpannya akan menimpa data wali tersebut.
   @GET('profile/dataaccountwali.php')
   Future<List<User>> getProfileParent(
     @Query('key') String key,
+    @Query('phone_number') String phoneNumber,
   );
 
   @POST('profile/gettokenwali.php')

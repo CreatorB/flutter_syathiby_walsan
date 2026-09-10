@@ -20,8 +20,12 @@ class SettingScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(getCurrentUserProvider);
     final key = '${currentUser?.key}';
+    // Nomor wali yang sedang login. Kunci sesi hanya menandai SANTRI dan dipakai
+    // bersama seluruh walinya, jadi tanpa ini layar Akun menampilkan nama, nomor,
+    // dan email wali LAIN -- lihat catatan di account_controller.dart.
+    final noWali = '${currentUser?.user ?? ''}';
     final fetchUserProfile = ref.watch(
-      fetchProfileProvider(key: key),
+      fetchProfileProvider(key: key, phoneNumber: noWali),
     );
     final isDarkMode = AdaptiveTheme.of(context).mode.isDark;
 
@@ -33,7 +37,7 @@ class SettingScreen extends HookConsumerWidget {
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(
-          fetchProfileProvider(key: key).future,
+          fetchProfileProvider(key: key, phoneNumber: noWali).future,
         ),
         child: Skeletonizer(
           enabled: fetchUserProfile.isLoading,

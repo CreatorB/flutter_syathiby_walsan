@@ -96,12 +96,16 @@ class ChangePasswordScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.min(6),
-                        FormBuilderValidators.required(),
-                      ],
-                    ),
+                    // `FormBuilderValidators.min(6)` adalah validator ANGKA -- ia mencoba
+                    // mengurai isian sebagai bilangan lalu membandingkannya dengan 6.
+                    // Untuk kata sandi berupa huruf, penguraiannya gagal dan pesan
+                    // "Value must be greater than or equal to 6" SELALU muncul,
+                    // sehingga tidak ada satu wali pun yang bisa mengganti kata
+                    // sandinya. Yang benar `minLength`, yang memeriksa panjang teks.
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Password lama wajib diisi'),
+                    ]),
                   ),
                   const Gap(16),
                   TextFormField(
@@ -126,12 +130,12 @@ class ChangePasswordScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.min(6),
-                        FormBuilderValidators.required(),
-                      ],
-                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Password baru wajib diisi'),
+                      FormBuilderValidators.minLength(6,
+                          errorText: 'Password baru minimal 6 karakter'),
+                    ]),
                   ),
                   const Gap(16),
                   TextFormField(
@@ -157,12 +161,18 @@ class ChangePasswordScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
-                    validator: FormBuilderValidators.compose(
-                      [
-                        FormBuilderValidators.min(6),
-                        FormBuilderValidators.required(),
-                      ],
-                    ),
+                    // Konfirmasi sebelumnya TIDAK PERNAH dibandingkan dengan kata
+                    // sandi baru -- salah ketik satu huruf tetap tersimpan, dan wali
+                    // baru sadar saat gagal masuk berikutnya.
+                    validator: (nilai) {
+                      if (nilai == null || nilai.isEmpty) {
+                        return 'Konfirmasi password wajib diisi';
+                      }
+                      if (nilai != newPassword.text) {
+                        return 'Konfirmasi password tidak sama dengan password baru';
+                      }
+                      return null;
+                    },
                   ),
                   const Gap(24),
                   FilledButton(
