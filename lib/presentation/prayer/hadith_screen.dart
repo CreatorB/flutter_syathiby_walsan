@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 
 import 'hadith_controller.dart';
 import 'hadith_detail_screen.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class HadithScreen extends HookConsumerWidget {
   final Book book;
@@ -109,6 +110,15 @@ class HadithScreen extends HookConsumerWidget {
         child: PagedListView(
           pagingController: pagingController,
           builderDelegate: PagedChildBuilderDelegate<Hadith>(
+                    // Pesan bawaan paket berbahasa Inggris ("No items found").
+                    noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                      judul: 'Belum ada hadits yang dapat ditampilkan',
+                      keterangan: 'Coba pilih kitab lain atau muat ulang halaman ini.',
+                      ikon: Icons.menu_book_outlined,
+                    ),
+                    firstPageErrorIndicatorBuilder: (context) => KeadaanGagal(
+                      onCobaLagi: pagingController.retryLastFailedRequest,
+                    ),
             itemBuilder: (context, hadith, index) {
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),

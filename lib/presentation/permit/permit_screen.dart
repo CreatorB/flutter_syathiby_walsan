@@ -13,6 +13,7 @@ import 'package:rabbaanii_portal/utils/custom_avatar_widget.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class PermitScreen extends HookConsumerWidget {
   const PermitScreen({super.key});
@@ -61,6 +62,15 @@ class PermitScreen extends HookConsumerWidget {
                   shrinkWrap: true,
                   pagingController: pagingController,
                   builderDelegate: PagedChildBuilderDelegate<Permit>(
+                    // Pesan bawaan paket berbahasa Inggris ("No items found").
+                    noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                      judul: 'Belum ada pengajuan izin',
+                      keterangan: 'Pengajuan izin untuk santri Anda akan muncul di sini.',
+                      ikon: Icons.event_busy_outlined,
+                    ),
+                    firstPageErrorIndicatorBuilder: (context) => KeadaanGagal(
+                      onCobaLagi: pagingController.retryLastFailedRequest,
+                    ),
                     itemBuilder: (context, permit, index) {
                       return _buildItemList(
                         context,

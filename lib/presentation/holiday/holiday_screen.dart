@@ -10,6 +10,7 @@ import 'package:rabbaanii_portal/presentation/holiday/holiday_controller.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class HolidayScreen extends HookConsumerWidget {
   const HolidayScreen({super.key});
@@ -56,6 +57,15 @@ class HolidayScreen extends HookConsumerWidget {
         child: PagedListView(
           pagingController: pagingController,
           builderDelegate: PagedChildBuilderDelegate<Event>(
+                    // Pesan bawaan paket berbahasa Inggris ("No items found").
+                    noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                      judul: 'Belum ada jadwal libur',
+                      keterangan: 'Jadwal libur santri akan muncul di sini setelah ditetapkan pondok.',
+                      ikon: Icons.beach_access_outlined,
+                    ),
+                    firstPageErrorIndicatorBuilder: (context) => KeadaanGagal(
+                      onCobaLagi: pagingController.retryLastFailedRequest,
+                    ),
             itemBuilder: (context, event, index) {
               final startDate = ref.watch(
                 formatDateProvider('${event.start_date}',
