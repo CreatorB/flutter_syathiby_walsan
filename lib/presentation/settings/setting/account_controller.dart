@@ -61,8 +61,12 @@ class AccountController extends _$AccountController {
 Future<User> fetchProfile(
   FetchProfileRef ref, {
   required String key,
+  // Nomor wali yang sedang login. Kunci sesi hanya menandai santri, jadi tanpa
+  // ini server menampilkan wali yang salah pada keluarga berwali dua.
+  String phoneNumber = '',
 }) async {
-  final result = await ref.watch(userServiceProvider).getProfileParent(key);
+  final result =
+      await ref.watch(userServiceProvider).getProfileParent(key, phoneNumber);
   return result.first;
 }
 

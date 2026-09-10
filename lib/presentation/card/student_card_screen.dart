@@ -17,8 +17,11 @@ class StudentCardScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentUser = ref.watch(getCurrentUserProvider);
     final key = '${currentUser?.key}';
+    // Nomor wali yang sedang login -- lihat catatan di account_controller.dart.
+    final noWali = '${currentUser?.user ?? ''}';
     final fetchProfile = ref.watch(fetchProfileProvider(
       key: key,
+      phoneNumber: noWali,
     ));
     final profile = fetchProfile.valueOrNull;
 
@@ -30,6 +33,7 @@ class StudentCardScreen extends HookConsumerWidget {
         onRefresh: () => ref.refresh(
           fetchProfileProvider(
             key: key,
+            phoneNumber: noWali,
           ).future,
         ),
         child: Skeletonizer(

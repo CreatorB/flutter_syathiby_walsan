@@ -29,7 +29,9 @@ class AccountScreen extends HookConsumerWidget {
     final currentUser = ref.watch(getCurrentUserProvider);
     final accountController = ref.watch(accountControllerProvider);
     final key = '${currentUser?.key}';
-    final fetchProfile = ref.watch(fetchProfileProvider(key: key));
+    final noWali = '${currentUser?.user ?? ''}';
+    final fetchProfile =
+        ref.watch(fetchProfileProvider(key: key, phoneNumber: noWali));
 
     final name = useTextEditingController();
     final email = useTextEditingController();
@@ -73,7 +75,7 @@ class AccountScreen extends HookConsumerWidget {
       context.showSuccessMessage(
         result.msg,
       );
-      ref.invalidate(fetchProfileProvider(key: key));
+      ref.invalidate(fetchProfileProvider(key: key, phoneNumber: noWali));
     }
 
     setProfile(fetchProfile.value);
@@ -83,7 +85,8 @@ class AccountScreen extends HookConsumerWidget {
         title: const Text('Profile'),
       ),
       body: RefreshIndicator(
-        onRefresh: () => ref.refresh(fetchProfileProvider(key: key).future),
+        onRefresh: () =>
+            ref.refresh(fetchProfileProvider(key: key, phoneNumber: noWali).future),
         child: Skeletonizer(
             enabled: fetchProfile.isLoading,
             child: ListView(
