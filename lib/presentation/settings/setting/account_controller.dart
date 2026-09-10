@@ -39,6 +39,7 @@ class AccountController extends _$AccountController {
     required String key,
     required String oldPassword,
     required String newPassword,
+    required String phoneNumber,
   }) async {
     state = const AsyncLoading();
     final result = await AsyncValue.guard(
@@ -47,6 +48,7 @@ class AccountController extends _$AccountController {
             key,
             oldPassword,
             newPassword,
+            phoneNumber,
           ),
     );
     state = result;

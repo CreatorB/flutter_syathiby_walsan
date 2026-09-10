@@ -42,6 +42,9 @@ class ChangePasswordScreen extends HookConsumerWidget {
             key: '${currentUser.key}',
             oldPassword: oldPassword.text.trim(),
             newPassword: newPassword.text.trim(),
+            // Nomor wali yang sedang login. Kunci sesi hanya menandai santri,
+            // jadi tanpa ini server tidak dapat membedakan ayah dari ibu.
+            phoneNumber: '${currentUser.user ?? ''}',
           );
 
       if (result == null || !context.mounted) return;
