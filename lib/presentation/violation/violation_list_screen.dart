@@ -13,6 +13,7 @@ import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import '../../di/providers.dart';
 import '../../routing/app_router.dart';
 import '../../utils/rest_exception.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class ViolationListScreen extends HookConsumerWidget {
 
@@ -60,6 +61,13 @@ class ViolationListScreen extends HookConsumerWidget {
         child: PagedListView(
           pagingController: pagingController,
           builderDelegate: PagedChildBuilderDelegate<Pelanggaran>(
+                    // Pesan bawaan paket berbahasa Inggris ("No items found").
+                    noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                      judul: 'Belum ada catatan pelanggaran',
+                      keterangan: 'Alhamdulillah, belum ada pelanggaran yang tercatat untuk santri Anda.',
+                      ikon: Icons.verified_outlined,
+                    ),
+
             itemBuilder: (context, violation, index) {
               final dateFormat = ref.watch(formatDateProvider(
                 '${violation.date}',

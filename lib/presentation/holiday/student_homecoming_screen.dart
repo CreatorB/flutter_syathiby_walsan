@@ -13,6 +13,7 @@ import 'package:rabbaanii_portal/utils/extension/ui.dart';
 
 import '../../di/providers.dart';
 import '../../utils/custom_avatar_widget.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class StudentHomecomingScreen extends HookConsumerWidget {
   final String? id;
@@ -77,6 +78,15 @@ class StudentHomecomingScreen extends HookConsumerWidget {
               shrinkWrap: true,
               pagingController: pagingController,
               builderDelegate: PagedChildBuilderDelegate(
+                // Pesan bawaan paket berbahasa Inggris ("No items found").
+                noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                  judul: 'Belum ada jadwal penjemputan',
+                  keterangan: 'Jadwal penjemputan akan muncul di sini setelah dibuka pondok.',
+                  ikon: Icons.directions_car_outlined,
+                ),
+                firstPageErrorIndicatorBuilder: (context) => KeadaanGagal(
+                  onCobaLagi: pagingController.retryLastFailedRequest,
+                ),
                 itemBuilder: (context, item, index) {
                   return _buildItemList(context, ref, item);
                 },

@@ -12,6 +12,7 @@ import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import '../../../di/providers.dart';
 import '../../../routing/app_router.dart';
+import 'package:rabbaanii_portal/utils/keadaan_kosong.dart';
 
 class StudentHealthScreen extends HookConsumerWidget {
   const StudentHealthScreen({super.key});
@@ -90,6 +91,15 @@ class StudentHealthScreen extends HookConsumerWidget {
               shrinkWrap: true,
               pagingController: pagingController,
               builderDelegate: PagedChildBuilderDelegate(
+                // Pesan bawaan paket berbahasa Inggris ("No items found").
+                noItemsFoundIndicatorBuilder: (context) => const KeadaanKosong(
+                  judul: 'Belum ada catatan kesehatan',
+                  keterangan: 'Alhamdulillah, belum ada riwayat pemeriksaan atau sakit yang tercatat.',
+                  ikon: Icons.health_and_safety_outlined,
+                ),
+                firstPageErrorIndicatorBuilder: (context) => KeadaanGagal(
+                  onCobaLagi: pagingController.retryLastFailedRequest,
+                ),
                 itemBuilder: (context, item, index) {
                   return _studentHealthItem(context, ref, item, index: index);
                 },
