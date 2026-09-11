@@ -44,7 +44,13 @@ class TahfidzActivityScreen extends HookConsumerWidget {
                 style: context.titleMediumBold,
               ),
               Text(
-                currentTahfidz?.nama_siswa ?? 'Tidak ada',
+                // Dulu di sini tertulis `?? 'Tidak ada'`, sehingga pada tanggal
+                // yang tidak ada kegiatannya layar menampilkan "Tidak ada" DI
+                // TEMPAT NAMA SANTRI -- terbaca seperti aplikasinya rusak,
+                // padahal yang kosong hanya tanggal yang sedang dipilih.
+                // Sekarang jatuh ke tanggalnya, yang selalu benar.
+                currentTahfidz?.nama_siswa ??
+                    DateFormat('EEEE, d MMMM y').format(dateSelected.value),
                 style: context.bodyMedium,
               ),
             ],
@@ -105,7 +111,35 @@ class TahfidzActivityScreen extends HookConsumerWidget {
         },
         child: Skeletonizer(
           enabled: fetchTahfidzHistory.isLoading,
-          child: Timeline.tileBuilder(
+          // Kalau tanggal yang dipilih tidak punya kegiatan, Timeline dengan
+          // itemCount 0 menghasilkan layar PUTIH TOTAL -- tanpa satu pun
+          // keterangan. Wali tidak tahu apakah aplikasinya rusak, datanya
+          // belum diisi, atau memang tidak ada kegiatan hari itu.
+          child: (!fetchTahfidzHistory.isLoading && itemCount == 0)
+              ? ListView(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 32, vertical: 48),
+                  children: [
+                    Icon(Icons.event_busy_outlined,
+                        size: 56, color: Theme.of(context).disabledColor),
+                    const SizedBox(height: 16),
+                    Text('Tidak ada kegiatan tahfidz pada tanggal ini',
+                        textAlign: TextAlign.center,
+                        style: context.titleMediumBold),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pilih tanggal lain di bagian atas, atau ketuk ikon',
+                      textAlign: TextAlign.center,
+                      style: context.bodyMedium,
+                    ),
+                    Text(
+                      'kalender untuk melompat ke tanggal tertentu.',
+                      textAlign: TextAlign.center,
+                      style: context.bodyMedium,
+                    ),
+                  ],
+                )
+              : Timeline.tileBuilder(
             theme: TimelineThemeData(
               nodePosition: 0,
               connectorTheme: ConnectorThemeData(
