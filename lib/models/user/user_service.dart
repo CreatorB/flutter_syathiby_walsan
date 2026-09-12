@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:rabbaanii_portal/models/message.dart';
 import 'package:rabbaanii_portal/models/slip/absent.dart';
+import 'package:rabbaanii_portal/models/user/forgot_password_result.dart';
 import 'package:rabbaanii_portal/models/user/login.dart';
 import 'package:rabbaanii_portal/models/user/register_wali_token.dart';
 import 'package:rabbaanii_portal/models/user/request_logout.dart';
@@ -191,9 +192,20 @@ abstract class UserService {
 
   @POST('profile/forgetpasswordwali.php')
   @FormUrlEncoded()
-  Future<Message> forgotPassword(
+  Future<ForgotPasswordResult> forgotPassword(
     @Field('email') String email,
     @Field('user') String phoneNumber,
+  );
+
+  // Langkah kedua: memasukkan kode OTP yang dikirim forgotPassword() ke email
+  // wali, lalu kata sandi baru. Hanya berfungsi kalau BREVO_API_KEY sudah
+  // diisi pondok -- lihat catatan di verifyresetwali.php.
+  @POST('profile/verifyresetwali.php')
+  @FormUrlEncoded()
+  Future<Message> verifyResetWali(
+    @Field('user') String phoneNumber,
+    @Field('kode') String kode,
+    @Field('password_baru') String newPassword,
   );
 
   @GET('profile/datauser.php')
