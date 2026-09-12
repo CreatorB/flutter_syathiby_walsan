@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:rabbaanii_portal/models/user/forgot_password_result.dart';
 import 'package:rabbaanii_portal/presentation/forgot/forgot_controller.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,16 +30,14 @@ class ForgotScreen extends HookConsumerWidget {
     final passwordUlang = useTextEditingController();
     final formKey = useMemoized(GlobalKey<FormState>.new, const []);
     final langkahKedua = useState(false);
-    final kontakWa = useState('');
+    final kontakWa = useState<List<WaKontak>>(const []);
 
     ref.listen(
       forgotControllerProvider,
       (previous, next) => next.showToastOnError(context),
     );
 
-    Future<void> bukaWhatsapp() async {
-      final nomor = kontakWa.value;
-      if (nomor.isEmpty) return;
+    Future<void> bukaWhatsapp(String nomor) async {
       final pesan = Uri.encodeComponent(
         'Assalamu\'alaikum, saya wali santri ingin bantuan mengatur ulang kata sandi akun Walsan.',
       );
@@ -48,16 +47,26 @@ class ForgotScreen extends HookConsumerWidget {
 
     Widget tombolWhatsapp() {
       if (kontakWa.value.isEmpty) return const SizedBox.shrink();
+      // Bisa 1 nomor (admin sesuai gender anaknya) atau 2 (anak ikhwan &
+      // akhwat sekaligus) -- satu tombol per nomor, labelnya menyebut siapa.
       return Padding(
         padding: const EdgeInsets.only(top: 12),
-        child: OutlinedButton.icon(
-          onPressed: bukaWhatsapp,
-          icon: const Icon(Icons.chat),
-          label: const Text('Hubungi Admin via WhatsApp'),
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 15.0),
-            minimumSize: const Size(double.infinity, 50.0),
-          ),
+        child: Column(
+          children: [
+            for (final kontak in kontakWa.value)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: OutlinedButton.icon(
+                  onPressed: () => bukaWhatsapp(kontak.nomor),
+                  icon: const Icon(Icons.chat),
+                  label: Text('Hubungi ${kontak.label} via WhatsApp'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    minimumSize: const Size(double.infinity, 50.0),
+                  ),
+                ),
+              ),
+          ],
         ),
       );
     }
