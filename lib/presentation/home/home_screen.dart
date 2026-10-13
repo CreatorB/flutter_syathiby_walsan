@@ -426,27 +426,65 @@ class HomeScreen extends HookConsumerWidget {
                   Expanded(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
-                        onPressed: () {
-                          _showUserSelected(
-                            context,
-                            ref,
-                            students,
-                            currentUser,
-                          );
-                        },
-                        label: Text(
-                          '${detailStudent?.nameStaff ?? 'Loading...'}',
-                          style: context.titleMediumBold?.copyWith(
-                            color: Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          TextButton.icon(
+                            onPressed: () {
+                              _showUserSelected(
+                                context,
+                                ref,
+                                students,
+                                currentUser,
+                              );
+                            },
+                            label: Text(
+                              '${detailStudent?.nameStaff ?? 'Loading...'}',
+                              style: context.titleMediumBold?.copyWith(
+                                color: Colors.white,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            icon: const Icon(
+                              Icons.arrow_drop_down_sharp,
+                              color: Colors.white,
+                            ),
+                            iconAlignment: IconAlignment.end,
+                          ),
+                          if ((students?.length ?? 0) > 1)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16),
+                              child: Text(
+                                '${students?.length ?? 0} anak terdaftar',
+                                style: context.bodySmall?.copyWith(
+                                  color: Colors.white.withOpacity(0.85),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Tambah Santri',
+                    onPressed: () {
+                      showModalBottomSheet(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20),
                           ),
                         ),
-                        icon: const Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: Colors.white,
-                        ),
-                        iconAlignment: IconAlignment.end,
-                      ),
+                        context: context,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        builder: (context) =>
+                            const BottomsheetAddStudentScreen(),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.person_add_alt_1,
+                      color: Colors.white,
                     ),
                   ),
                   Padding(
