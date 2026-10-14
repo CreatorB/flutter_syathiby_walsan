@@ -10,7 +10,7 @@ import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/rest_exception.dart';
 import 'package:toastification/toastification.dart';
 
-void _clearSessionAndRedirectToLogin(BuildContext context) {
+void clearSessionAndRedirectToLogin(BuildContext context) {
   final container = ProviderScope.containerOf(context);
   final pref = container.read(sharedPreferencesHelperProvider);
   pref.remove(AppConstant.keyLoginSession);
@@ -18,6 +18,10 @@ void _clearSessionAndRedirectToLogin(BuildContext context) {
   pref.remove(AppConstant.keySavedPhone);
   pref.remove(AppConstant.keySavedPassword);
   context.goNamed(AppRoute.login.name);
+}
+
+void _clearSessionAndRedirectToLogin(BuildContext context) {
+  clearSessionAndRedirectToLogin(context);
 }
 
 /// A helper [AsyncValue] extension to show an alert dialog on error
