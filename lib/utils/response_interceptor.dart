@@ -53,8 +53,8 @@ class ResponseInterceptor extends Interceptor {
             handler.next(response);
             break;
           case RestException.RESPONSE_USER_NOT_FOUND:
-            debugPrint('[ResponseInterceptor] USER_NOT_FOUND case - throwing exception');
-            throw RestException(responseData.msg ?? 'User not found', responseData.errCode ?? '00');
+            debugPrint('[ResponseInterceptor] USER_NOT_FOUND case - throwing SessionExpiredException');
+            throw SessionExpiredException(_sessionExpiredMessage);
           case RestException.RESPONSE_ERROR:
             debugPrint('[ResponseInterceptor] ERROR case - msg: ${responseData.msg}');
             if (responseData.msg == 'no data' || responseData.msg == 'No data') {
@@ -97,8 +97,8 @@ class ResponseInterceptor extends Interceptor {
               handler.next(response);
               break;
             case RestException.RESPONSE_USER_NOT_FOUND:
-              debugPrint('[ResponseInterceptor] USER_NOT_FOUND case - throwing exception');
-              throw RestException(responseData.msg ?? 'User not found', responseData.errCode ?? '00');
+              debugPrint('[ResponseInterceptor] USER_NOT_FOUND case - throwing SessionExpiredException');
+              throw SessionExpiredException(_sessionExpiredMessage);
             case RestException.RESPONSE_ERROR:
               debugPrint('[ResponseInterceptor] ERROR case');
               if (responseData.msg == 'no data' || responseData.msg == 'No data') {

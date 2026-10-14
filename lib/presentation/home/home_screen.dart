@@ -21,6 +21,7 @@ import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
 import 'package:rabbaanii_portal/utils/json_helper.dart';
+import 'package:rabbaanii_portal/utils/rest_exception.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -39,7 +40,11 @@ class HomeScreen extends HookConsumerWidget {
   }
 
   /// Fetch detail student dengan debug detail
-  Future<List<Store>> _safelyFetchDetailStudent(String key, Dio dio) async {
+  Future<List<Store>> _safelyFetchDetailStudent(
+    String key,
+    Dio dio,
+    BuildContext context,
+  ) async {
     try {
       print('🔍 Fetching detail student dengan key: $key');
       final response = await dio.get(
@@ -107,12 +112,20 @@ class HomeScreen extends HookConsumerWidget {
       }
     } catch (err) {
       print('❌ Network error _safelyFetchDetailStudent: $err');
+      if (err is DioException && err.error is SessionExpiredException) {
+        print('🔐 Session expired detected di detailwali');
+        clearSessionAndRedirectToLogin(context);
+      }
       return [];
     }
   }
 
   /// Fetch student data dengan debug detail
-  Future<List<Store>> _safelyFetchStudentData(String key, Dio dio) async {
+  Future<List<Store>> _safelyFetchStudentData(
+    String key,
+    Dio dio,
+    BuildContext context,
+  ) async {
     try {
       print('🔍 Fetching student data dengan key: $key');
       final response = await dio.get(
@@ -180,6 +193,10 @@ class HomeScreen extends HookConsumerWidget {
       }
     } catch (err) {
       print('❌ Network error _safelyFetchStudentData: $err');
+      if (err is DioException && err.error is SessionExpiredException) {
+        print('🔐 Session expired detected di datasiswa');
+        clearSessionAndRedirectToLogin(context);
+      }
       return [];
     }
   }
@@ -224,13 +241,14 @@ class HomeScreen extends HookConsumerWidget {
 
     final fetchDetailFuture = useMemoized(
       () => key.isNotEmpty
-          ? _safelyFetchDetailStudent(key, dio)
+          ? _safelyFetchDetailStudent(key, dio, context)
           : Future.value([]),
       [key],
     );
     final fetchStudentFuture = useMemoized(
-      () =>
-          key.isNotEmpty ? _safelyFetchStudentData(key, dio) : Future.value([]),
+      () => key.isNotEmpty
+          ? _safelyFetchStudentData(key, dio, context)
+          : Future.value([]),
       [key],
     );
 
