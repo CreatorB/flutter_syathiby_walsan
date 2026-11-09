@@ -10,6 +10,7 @@ import 'package:rabbaanii_portal/models/service_injection.dart';
 import 'package:rabbaanii_portal/presentation/activity/activity_controller.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
+import 'package:rabbaanii_portal/utils/fitur_kegiatan.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
@@ -112,8 +113,13 @@ class StudentActivityScreen extends HookConsumerWidget {
               _buildCardSchoolActivity(context, recap),
               _buildCardTahfidzActivity(context, recap),
               _buildCardEatingActivity(context, recap),
-              _buildCardHostelActivity(context, recap),
-              _buildCardStudentActivity(context, ref, key, formattedDate),
+              // "Kegiatan Asrama" dan "Aktivitas Santri" disembunyikan
+              // sementara karena belum ada operator yang standby untuk
+              // menangani kegiatan. Lihat FiturKegiatan.
+              if (FiturKegiatan.tampil) ...[
+                _buildCardHostelActivity(context, recap),
+                _buildCardStudentActivity(context, ref, key, formattedDate),
+              ],
             ],
           ),
         ),

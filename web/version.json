@@ -1,15 +1,20 @@
 {
-  "version": "1.0.0",
-  "buildNumber": "1",
-  "buildDate": "2026-07-27",
+  "version": "1.0.1",
+  "buildNumber": "2",
+  "buildDate": "2026-11-10",
   "name": "Walsan",
   "packageName": "rabbaanii_portal",
   "baseHref": "/",
   "features": [
+    "Aplikasi web walsan kini memakai project Firebase yang sama dengan aplikasi staff, yaitu syathiby-1345121. Sebelumnya versi web menunjuk project milik pihak lain sehingga token notifikasi browser selalu ditolak server",
+    "Notifikasi push ke browser siap diaktifkan begitu kunci VAPID (Web Push certificate) project syathiby-1345121 ditambahkan saat build",
+    "Menu Kegiatan Asrama, Aktivitas Santri, dan Libur Santri disembunyikan sementara karena belum ada operator yang standby. Cara mengaktifkannya kembali cukup mengubah satu baris pada file FiturKegiatan",
     "Initial Flutter web deployment for walsan.syathiby.id",
     "Served from root via subdomain (NOT subpath like staff app /web/)",
     "API endpoint same as staff app: https://aplikasi.syathiby.id/geten/",
     "CORS handled by env_loader.php via APP_PRODUCTION_ORIGINS",
-    "Firebase project: rabbaniiapps (sender 859044680272)"
+    "27 Okt 2026: penolakan pendaftaran memakai errCode '02' dan pesan berarah aksi",
+    "27 Okt 2026: banner 'anak ini sudah punya N wali' di layar Pendaftaran & Tambah Santri",
+    "29 Okt 2026: 'Kegiatan Asrama', 'Aktivitas Santri', dan 'Libur Santri' disembunyikan sementara karena belum ada operator yang standby. Menu 'Aktivitas Santri' (Kegiatan Sekolah/Tahfidz/Makan) tetap ada"
   ]
 }

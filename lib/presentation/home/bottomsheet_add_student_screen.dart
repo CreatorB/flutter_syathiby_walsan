@@ -10,6 +10,7 @@ import 'package:rabbaanii_portal/presentation/home/home_controller.dart';
 import 'package:rabbaanii_portal/res/strings.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/widgets/wali_info_banner.dart';
 
 import '../../models/student/siswa.dart';
 import '../register/register_controller.dart';
@@ -84,6 +85,16 @@ class BottomsheetAddStudentScreen extends HookConsumerWidget {
                 }
                 studentSelected.value = student;
               },
+            ),
+            // Santri ini sudah punya wali lain? Perlu tahu dari sini, bukan
+            // dari penolakan yang membingungkan nanti.
+            WaliInfoBanner(
+              jumlahWali: studentSelected.value?.jumlahWali ?? 0,
+              message: (studentSelected.value?.jumlahWali ?? 0) > 0
+                  ? 'Anak ini sudah punya ${studentSelected.value!.jumlahWali} wali. '
+                      'Kalau anak ini memang anak Anda dan wali Anda belum terdaftar, '
+                      'tekan Simpan untuk menautkan nomor Anda.'
+                  : '',
             ),
             const SizedBox(height: 16),
             FilledButton(

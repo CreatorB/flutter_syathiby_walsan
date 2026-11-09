@@ -49,21 +49,25 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // Catatan 10 Nov 2026: file ini TIDAK dipakai aplikasi (main.dart mengimpor
+  // `package:rabbaanii_portal/firebase_options.dart` di lib/ root). Semula
+  // menunjuk project `rabbaniiapps` -- sudah diselaraskan ke project pondok
+  // `syathiby-1345121` supaya tidak ada lagi rujukan ke project terlarang.
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC7EG9hMQQFQEURKkn_mq0yP6L5X0reoB0',
-    appId: '1:859044680272:android:e8e9cda6d0a7bf4643f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    storageBucket: 'rabbaniiapps.appspot.com',
+    apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
+    appId: '1:921923279470:android:7860d2129affa7afb8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBos1Gh-XXrZaxHF-syAt0lDCALew184wI',
-    appId: '1:859044680272:ios:9efb208e8b0ecc2243f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    storageBucket: 'rabbaniiapps.appspot.com',
-    iosBundleId: 'com.muslimdeveloper.rabbaaniiPortal',
+    apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
+    appId: '1:921923279470:ios:26fc0aa710811378b8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
+    iosBundleId: 'walsan.syathiby.id',
   );
 
 }
