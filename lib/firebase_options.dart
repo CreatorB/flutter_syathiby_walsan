@@ -57,9 +57,16 @@ class DefaultFirebaseOptions {
     storageBucket: 'syathiby-1345121.firebasestorage.app',
   );
 
+  // Android -> Android App `walsan.syathiby.id` (10 Nov 2026).
+  //
+  // appId ini didaftarkan resmi lewat Firebase Management API, karena
+  // package yang dipakai build (`walsan.syathiby.id`) sebelumnya tidak punya
+  // entri di `google-services.json` -- hanya `id.syathiby.app` dan
+  // `id.syathiby.walsan`. Tanpa entri yang cocok, token FCM walsan akan
+  // diterbitkan untuk app yang salah.
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
-    appId: '1:921923279470:android:7860d2129affa7afb8247f',
+    appId: '1:921923279470:android:57f8a8fd217ca433b8247f',
     messagingSenderId: '921923279470',
     projectId: 'syathiby-1345121',
     storageBucket: 'syathiby-1345121.firebasestorage.app',
