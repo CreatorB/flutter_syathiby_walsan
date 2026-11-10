@@ -1,30 +1,52 @@
-// This is a basic Flutter widget test.
+// Uji untuk=walsan 1.0.1+2 (10 Nov 2026).
 //
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Catatan: berkas ini sebelumnya berisi stub template Flutter bawaan
+// ("Counter increments smoke test") yang menguji tombol '+' counter --
+// UI yang tidak pernah ada di aplikasi walsan. Stub itu gagal sejak repo
+// dibuat (commit "Initial commit"), sehingga `flutter test` selalu merah
+// dan tidak bisa dipakai sebagai gerbang rilis.
+//
+// Diganti dengan uji yang benar-benar menyentuh bagian yang ikut rilis.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:rabbaanii_portal/app.dart';
+import 'package:rabbaanii_portal/models/student/siswa.dart';
+import 'package:rabbaanii_portal/utils/fitur_kegiatan.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('Fitur kegiatan', () {
+    test('sakelar tampilan dibunyikan (menu kegiatan disembunyikan sementara)', () {
+      // Menu "Kegiatan Asrama", "Aktivitas Santri", dan "Libur Santri"
+      // disembunyikan karena belum ada operator yang standby. Ubah ke true
+      // saat operator sudah siap.
+      expect(FiturKegiatan.tampil, isFalse);
+    });
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  group('Siswa', () {
+    test('membaca jumlah_wali dan sudah_punya_wali dari respons server', () {
+      // Dua field ini ikut rilis 1.0.1+2. Datanya berasal dari
+      // `geten/siswa/searchsiswafont.php` dan dipakai untuk memberi tahu
+      // pendaftar bahwa anaknya sudah punya akun wali lain.
+      final siswa = Siswa.fromJson(const {
+        'nis': '0099625532',
+        'id_siswa': '2094',
+        'nama_lengkap': 'AAS',
+        'kelas': '12 C',
+        'jumlah_wali': 2,
+        'sudah_punya_wali': 1,
+      });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+      expect(siswa.nis, '0099625532');
+      expect(siswa.namaLengkap, 'AAS');
+      expect(siswa.jumlahWali, 2);
+      expect(siswa.sudahPunyaWali, 1);
+    });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    test('field wali tetap null bila server tidak mengirimnya', () {
+      final siswa = Siswa.fromJson(const {'nis': '0001', 'nama_lengkap': 'Uji'});
+
+      expect(siswa.jumlahWali, isNull);
+      expect(siswa.sudahPunyaWali, isNull);
+    });
   });
 }
