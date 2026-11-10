@@ -36,6 +36,12 @@ abstract class Siswa with _$Siswa {
     @JsonKey(name: 'type') String? type,
     @JsonKey(name: 'tabungan') String? tabungan,
     @JsonKey(name: 'limit_transaksi') String? limitTransaksi,
+    // Jumlah wali aktif yang sudah tertaut ke siswa ini (dari
+    // `geten/siswa/searchsiswafont.php`). Dipakai aplikasi untuk memberi tahu
+    // "anak ini sudah punya akun wali lain" -- supaya pendaftar tahu kenapa
+    // pendaftaran ditolak, alih-alih mengira nama anaknya hilang.
+    @JsonKey(name: 'jumlah_wali') int? jumlahWali,
+    @JsonKey(name: 'sudah_punya_wali') int? sudahPunyaWali,
   }) = _Siswa;
 
   factory Siswa.fromJson(Map<String, dynamic> json) => _$SiswaFromJson(json);

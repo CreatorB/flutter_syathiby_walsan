@@ -1,4 +1,4 @@
-import 'package:dropdown_search/dropdown_search.dart';
+﻿import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -9,6 +9,7 @@ import 'package:rabbaanii_portal/l10n/string_hardcoded.dart';
 import 'package:rabbaanii_portal/models/student/siswa.dart';
 import 'package:rabbaanii_portal/presentation/register/register_controller.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/widgets/wali_info_banner.dart';
 
 class RegisterScreen extends HookConsumerWidget {
   const RegisterScreen({super.key});
@@ -78,6 +79,16 @@ class RegisterScreen extends HookConsumerWidget {
                 }
                 studentSelected.value = student;
               },
+            ),
+            // Anak ini sudah punya wali lain? Perlu tahu dari sini, bukan dari
+            // penolakan yang membingungkan nanti.
+            WaliInfoBanner(
+              jumlahWali: studentSelected.value?.jumlahWali ?? 0,
+              message: (studentSelected.value?.jumlahWali ?? 0) > 0
+                  ? 'Anak ini sudah punya ${studentSelected.value!.jumlahWali} wali. '
+                      'Anda tetap bisa mendaftar dengan nomor HP Anda sendiri untuk '
+                      'menjadi wali kedua atau seterusnya.'
+                  : '',
             ),
             const Gap(16),
             TextFormField(
@@ -177,7 +188,25 @@ class RegisterScreen extends HookConsumerWidget {
                       password: password.text,
                     );
                 if (!context.mounted) return;
-                context.showSuccessMessage(result?.msg ?? '');
+
+                // GAGAL PENDAFTARAN.
+                //
+                // Server membalas penolakan dengan errCode '02' (bukan '01'),
+                // jadi API melempar RestException, AsyncValue.guard menangkapnya,
+                // dan hasil di sini null. Pesan errornya sudah ditampilkan oleh
+                // listener di atas (showToastOnError).
+                //
+                // SEBELUMNYA kode ini tetap menampilkan toast hijau "sukses"
+                // berisi TEKS PENOLAKAN, lalu melompat balik ke halaman login.
+                // Dari mata wali: "gagal, tapi tidak ada yang menjelaskan harus
+                // dilakukan apa" -- keluhan yang berulang di walsan.syathiby.id.
+                // Sekarang: pesan error tampil, form TETAP terbuka supaya user
+                // bisa memperbaiki data atau masuk dengan akun yang ada.
+                if (result == null) {
+                  return;
+                }
+
+                context.showSuccessMessage(result.msg);
                 context.pop();
               },
               child: registerController.isLoading
@@ -206,3 +235,4 @@ class RegisterScreen extends HookConsumerWidget {
     );
   }
 }
+

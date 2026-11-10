@@ -7,6 +7,24 @@ Sections: **Added · Changed · Fixed · Removed**
 
 ---
 
+## [1.0.0] – 2026-10-29
+
+### Changed
+- **Menu Kegiatan Disembunyikan Sementara (Activities, Hostel Activities, Student Holidays)**
+  - **Alasan**: Fitur "Kegiatan Asrama", "Aktivitas Santri", dan "Libur Santri" sudah tersedia di aplikasi, tetapi **belum ada operator yang standby** untuk menangani kegiatan. Menampilkannya dulu membuat wali menanyakan kegiatan yang belum ada yang menanganinya
+  - **Yang disembunyikan**:
+    - Kartu **"Kegiatan Asrama"** di layar Kegiatan Santri
+    - Daftar **"Aktivitas Santri"** di layar Kegiatan Santri
+    - Menu **"Libur Santri"** di beranda
+  - **Yang tetap ada**: Menu **"Aktivitas Santri"** di beranda, beserta kartunya **Kegiatan Sekolah**, **Kegiatan Tahfidz**, dan **Kegiatan Makan** — ketiganya punya data yang sudah terisi
+  - **Cara mengaktifkan kembali**: ubah `FiturKegiatan.tampil` menjadi `true` di `lib/utils/fitur_kegiatan.dart`. Tidak perlu menyentuh kode lain
+  - **File yang Dimodifikasi**:
+    - `lib/utils/fitur_kegiatan.dart` (baru)
+    - `lib/presentation/activity/student_activity_screen.dart`
+    - `lib/presentation/home/home_screen.dart`
+
+---
+
 ## [Unreleased] – 2026-03-15
 
 ### Changed
