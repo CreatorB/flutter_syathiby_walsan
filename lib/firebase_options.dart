@@ -40,49 +40,63 @@ class DefaultFirebaseOptions {
     }
   }
 
+  // Web -> project `syathiby-1345121` (10 Nov 2026).
+  //
+  // Sebelumnya menunjuk `rabbaniiapps`, project milik entitas lain yang tokennya
+  // selalu ditolak FCM (SENDER_ID_MISMATCH). Web App `syathiby-web-walsan`
+  // dibuat resmi di project pondok lewat Firebase Management API.
+  //
+  // `measurementId` dikosongkan: Web App baru ini belum punya property
+  // Analytics dan aplikasi tidak memakai analytics.
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCQF6-D46wjIkwPb4IW3aUsPg6Ggovb2lU',
-    appId: '1:859044680272:web:3385a8eff140200d43f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    authDomain: 'rabbaniiapps.firebaseapp.com',
-    storageBucket: 'rabbaniiapps.appspot.com',
-    measurementId: 'G-0Q5XCW176E',
+    apiKey: 'AIzaSyCPx66WcwnjqYRUJzTrXUf7BPh_6FH49Us',
+    appId: '1:921923279470:web:8ee40d75d98b362eb8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    authDomain: 'syathiby-1345121.firebaseapp.com',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
   );
 
+  // Android -> Android App `walsan.syathiby.id` (10 Nov 2026).
+  //
+  // appId ini didaftarkan resmi lewat Firebase Management API, karena
+  // package yang dipakai build (`walsan.syathiby.id`) sebelumnya tidak punya
+  // entri di `google-services.json` -- hanya `id.syathiby.app` dan
+  // `id.syathiby.walsan`. Tanpa entri yang cocok, token FCM walsan akan
+  // diterbitkan untuk app yang salah.
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
-    appId: '1:921923279470:android:7860d2129affa7afb8247f',
+    appId: '1:921923279470:android:57f8a8fd217ca433b8247f',
     messagingSenderId: '921923279470',
     projectId: 'syathiby-1345121',
     storageBucket: 'syathiby-1345121.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBos1Gh-XXrZaxHF-syAt0lDCALew184wI',
-    appId: '1:859044680272:ios:9efb208e8b0ecc2243f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    storageBucket: 'rabbaniiapps.appspot.com',
-    iosBundleId: 'com.muslimdeveloper.rabbaaniiPortal',
+    apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
+    appId: '1:921923279470:ios:26fc0aa710811378b8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
+    iosBundleId: 'walsan.syathiby.id',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBos1Gh-XXrZaxHF-syAt0lDCALew184wI',
-    appId: '1:859044680272:ios:9efb208e8b0ecc2243f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    storageBucket: 'rabbaniiapps.appspot.com',
-    iosBundleId: 'com.muslimdeveloper.rabbaaniiPortal',
+    apiKey: 'AIzaSyAML43jqvWkDzw7WtH5FXxDPaNQmJGbr6w',
+    appId: '1:921923279470:ios:26fc0aa710811378b8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
+    iosBundleId: 'walsan.syathiby.id',
   );
 
+  // Windows memakai konfigurasi web `syathiby-web-walsan`.
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCQF6-D46wjIkwPb4IW3aUsPg6Ggovb2lU',
-    appId: '1:859044680272:web:5a35b16f5f42cbaa43f755',
-    messagingSenderId: '859044680272',
-    projectId: 'rabbaniiapps',
-    authDomain: 'rabbaniiapps.firebaseapp.com',
-    storageBucket: 'rabbaniiapps.appspot.com',
-    measurementId: 'G-8Z3XK5JLG1',
+    apiKey: 'AIzaSyCPx66WcwnjqYRUJzTrXUf7BPh_6FH49Us',
+    appId: '1:921923279470:web:8ee40d75d98b362eb8247f',
+    messagingSenderId: '921923279470',
+    projectId: 'syathiby-1345121',
+    authDomain: 'syathiby-1345121.firebaseapp.com',
+    storageBucket: 'syathiby-1345121.firebasestorage.app',
   );
 }

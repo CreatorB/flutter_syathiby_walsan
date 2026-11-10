@@ -1,14 +1,17 @@
 importScripts("https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js");
 
+// Service worker Firebase untuk aplikasi WALSAN (walsan.syathiby.id).
+// Project: syathiby-1345121 (10 Nov 2026). Sebelumnya `rabbaniiapps` --
+// token dari project itu ditolak FCM karena service account pondok hanya
+// punya akses ke `syathiby-1345121`.
 firebase.initializeApp({
-    apiKey: "AIzaSyCQF6-D46wjIkwPb4IW3aUsPg6Ggovb2lU",
-    appId: "1:859044680272:web:3385a8eff140200d43f755",
-    messagingSenderId: "859044680272",
-    projectId: "rabbaniiapps",
-    authDomain: "rabbaniiapps.firebaseapp.com",
-    storageBucket: "rabbaniiapps.appspot.com",
-    measurementId: "G-0Q5XCW176E"
+    apiKey: "AIzaSyCPx66WcwnjqYRUJzTrXUf7BPh_6FH49Us",
+    appId: "1:921923279470:web:8ee40d75d98b362eb8247f",
+    messagingSenderId: "921923279470",
+    projectId: "syathiby-1345121",
+    authDomain: "syathiby-1345121.firebaseapp.com",
+    storageBucket: "syathiby-1345121.firebasestorage.app"
 });
 
 const messaging = firebase.messaging();

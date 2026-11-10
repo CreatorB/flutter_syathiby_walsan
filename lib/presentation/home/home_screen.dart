@@ -20,6 +20,7 @@ import 'package:rabbaanii_portal/utils/custom_avatar_widget.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
 import 'package:rabbaanii_portal/utils/extension/typography.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/fitur_kegiatan.dart';
 import 'package:rabbaanii_portal/utils/json_helper.dart';
 import 'package:rabbaanii_portal/utils/rest_exception.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -366,11 +367,14 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.access_time,
                         goToRouteName: AppRoute.studentActivity.name,
                       ),
-                      MenuGrid(
-                        title: 'Libur Santri',
-                        iconData: Icons.holiday_village,
-                        goToRouteName: AppRoute.studentHoliday.name,
-                      ),
+                      // "Libur Santri" disembunyikan sementara karena belum
+                      // ada operator yang standby. Lihat FiturKegiatan.
+                      if (FiturKegiatan.tampil)
+                        MenuGrid(
+                          title: 'Libur Santri',
+                          iconData: Icons.holiday_village,
+                          goToRouteName: AppRoute.studentHoliday.name,
+                        ),
                       MenuGrid(
                         title: 'Kaldik Pondok',
                         iconData: Icons.calendar_month,
