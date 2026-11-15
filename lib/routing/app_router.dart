@@ -57,6 +57,12 @@ import '../presentation/prayer/surah_screen.dart';
 import '../presentation/privacy_policy/about_us_screen.dart';
 import '../presentation/privacy_policy/agreement_screen.dart';
 import '../presentation/privacy_policy/privacy_policy_screen.dart';
+import '../presentation/saldo/batas_jajan_screen.dart';
+import '../presentation/saldo/jajan_anak_screen.dart';
+import '../presentation/saldo/katalog_kantin_screen.dart';
+import '../presentation/saldo/kantin_hub_screen.dart';
+import '../presentation/saldo/saldo_topup_screen.dart';
+import '../presentation/saldo/topup_form_screen.dart';
 import '../presentation/score/student_score_detail_screen.dart';
 import '../presentation/tv/tv_screen.dart';
 import '../presentation/webview/webview_screen.dart';
@@ -88,6 +94,12 @@ enum AppRoute {
   bill,
   studentHealth,
   studentCard,
+  kantinHub,
+  kantinKatalog,
+  kantinBatas,
+  saldoTopup,
+  topupForm,
+  jajanAnak,
   studentSaving,
   studentEvaluation,
   studentViolation,
@@ -289,6 +301,43 @@ GoRouter goRouter(GoRouterRef ref) {
                     path: 'student-card',
                     name: AppRoute.studentCard.name,
                     builder: (context, state) => const StudentCardScreen(),
+                  ),
+                  GoRoute(
+                    path: 'kantin',
+                    name: AppRoute.kantinHub.name,
+                    builder: (context, state) => const KantinHubScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'menu-harga',
+                        name: AppRoute.kantinKatalog.name,
+                        builder: (context, state) => const KatalogKantinScreen(),
+                      ),
+                      GoRoute(
+                        path: 'batas-jajan',
+                        name: AppRoute.kantinBatas.name,
+                        builder: (context, state) => const BatasJajanScreen(),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'saldo-topup',
+                    name: AppRoute.saldoTopup.name,
+                    builder: (context, state) => const SaldoTopupScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'isi-saldo',
+                        name: AppRoute.topupForm.name,
+                        builder: (context, state) => TopupFormScreen(
+                          idSiswaAwal: int.tryParse(state.uri.queryParameters['anak'] ?? ''),
+                          nominalAwal: int.tryParse(state.uri.queryParameters['nominal'] ?? ''),
+                        ),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'jajan-anak',
+                    name: AppRoute.jajanAnak.name,
+                    builder: (context, state) => const JajanAnakScreen(),
                   ),
                   GoRoute(
                       path: 'violation',

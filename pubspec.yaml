@@ -199,6 +199,7 @@ flutter:
     - assets/fonts/
     - assets/icon/
     - assets/images/
+    - assets/json/
 
   fonts:
     - family: Uthmanic
