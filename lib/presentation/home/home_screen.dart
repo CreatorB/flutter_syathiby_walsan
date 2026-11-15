@@ -342,6 +342,11 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.credit_card,
                         goToRouteName: AppRoute.studentCard.name,
                       ),
+                      MenuGrid(
+                        title: 'Kantin',
+                        iconData: Icons.storefront,
+                        goToRouteName: AppRoute.kantinHub.name,
+                      ),
                       // MenuGrid(
                       //   title: 'Penilaian',
                       //   iconData: Icons.edit_document,
