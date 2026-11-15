@@ -106,6 +106,38 @@ void main() {
     expect(r.transaksi.single.saldoSesudah, 117000);
   });
 
+  test('katalog kantin: tersedia false menandai habis, string/angka ditoleransi', () {
+    final d = ProdukKatalog.daftarDari({
+      'produk': [
+        {'nama': 'Roti', 'harga': 4000, 'kategori': 'Makanan', 'tersedia': true},
+        {'nama': 'Air', 'harga': '3000', 'kategori': '', 'tersedia': false},
+        {'nama': 'Susu', 'harga': 5000, 'kategori': 'Minuman'},
+      ],
+    });
+    expect(d.length, 3);
+    expect(d[0].tersedia, true);
+    expect(d[1].tersedia, false);
+    expect(d[1].harga, 3000);
+    expect(d[2].tersedia, true);
+    expect(ProdukKatalog.daftarDari({}), isEmpty);
+  });
+
+  test('batas jajan: sisa dihitung dari batas efektif', () {
+    final b = BatasJajan.fromJson({
+      'batas_pondok': 0,
+      'batas_wali': 20000,
+      'batas_efektif': 20000,
+      'terpakai_hari_ini': 8000,
+    });
+    expect(b.batasWali, 20000);
+    expect(b.sisa, 12000);
+    final habis = BatasJajan.fromJson({'batas_efektif': 5000, 'terpakai_hari_ini': 9000});
+    expect(habis.sisa, 0);
+    final tanpa = BatasJajan.fromJson({'batas_pondok': 0, 'batas_wali': 0, 'batas_efektif': 0, 'terpakai_hari_ini': '3000'});
+    expect(tanpa.sisa, isNull);
+    expect(tanpa.terpakaiHariIni, 3000);
+  });
+
   test('hasil pengajuan top-up', () {
     final h = HasilAjukanTopup.fromJson({'kode': 'TU-20261116-0001', 'status': 'menunggu'});
     expect(h.kode, 'TU-20261116-0001');

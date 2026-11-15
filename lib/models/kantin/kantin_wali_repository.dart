@@ -101,6 +101,22 @@ class KantinWaliRepository {
         'page': page,
       }));
 
+  Future<List<ProdukKatalog>> katalog(String key, String noWali) async =>
+      ProdukKatalog.daftarDari(
+          await _ambil('wali/kantin.php', _dasar(key, noWali, 'katalog')));
+
+  Future<BatasJajan> batas(String key, String noWali, int idSiswa) async =>
+      BatasJajan.fromJson(await _ambil(
+          'wali/kantin.php', {..._dasar(key, noWali, 'batas'), 'id_siswa': idSiswa}));
+
+  /// Mengembalikan batas efektif baru. Server membalas errCode 02 bila melebihi
+  /// batas pondok; pesannya dilempar sebagai [KantinWaliException].
+  Future<int> setBatas(String key, String noWali, int idSiswa, int batas) async {
+    final d = await _ambil('wali/kantin.php',
+        {..._dasar(key, noWali, 'batas_set'), 'id_siswa': idSiswa, 'batas': batas});
+    return int.tryParse('${d['batas_efektif'] ?? 0}'.split('.').first) ?? 0;
+  }
+
   Future<HasilAjukanTopup> ajukanTopup({
     required String key,
     required String noWali,
@@ -167,4 +183,9 @@ final rekeningTopupProvider =
 final riwayatTopupProvider = FutureProvider.autoDispose<List<TopupItem>>((ref) {
   final s = _sesi(ref);
   return ref.watch(kantinWaliRepositoryProvider).riwayatTopup(s.key, s.noWali);
+});
+
+final katalogKantinProvider = FutureProvider.autoDispose<List<ProdukKatalog>>((ref) {
+  final s = _sesi(ref);
+  return ref.watch(kantinWaliRepositoryProvider).katalog(s.key, s.noWali);
 });

@@ -343,14 +343,9 @@ class HomeScreen extends HookConsumerWidget {
                         goToRouteName: AppRoute.studentCard.name,
                       ),
                       MenuGrid(
-                        title: 'Saldo & Top-up',
-                        iconData: Icons.account_balance_wallet,
-                        goToRouteName: AppRoute.saldoTopup.name,
-                      ),
-                      MenuGrid(
-                        title: 'Jajan Anak',
-                        iconData: Icons.fastfood,
-                        goToRouteName: AppRoute.jajanAnak.name,
+                        title: 'Kantin',
+                        iconData: Icons.storefront,
+                        goToRouteName: AppRoute.kantinHub.name,
                       ),
                       // MenuGrid(
                       //   title: 'Penilaian',

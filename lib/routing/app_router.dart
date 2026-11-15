@@ -57,7 +57,10 @@ import '../presentation/prayer/surah_screen.dart';
 import '../presentation/privacy_policy/about_us_screen.dart';
 import '../presentation/privacy_policy/agreement_screen.dart';
 import '../presentation/privacy_policy/privacy_policy_screen.dart';
+import '../presentation/saldo/batas_jajan_screen.dart';
 import '../presentation/saldo/jajan_anak_screen.dart';
+import '../presentation/saldo/katalog_kantin_screen.dart';
+import '../presentation/saldo/kantin_hub_screen.dart';
 import '../presentation/saldo/saldo_topup_screen.dart';
 import '../presentation/saldo/topup_form_screen.dart';
 import '../presentation/score/student_score_detail_screen.dart';
@@ -91,6 +94,9 @@ enum AppRoute {
   bill,
   studentHealth,
   studentCard,
+  kantinHub,
+  kantinKatalog,
+  kantinBatas,
   saldoTopup,
   topupForm,
   jajanAnak,
@@ -295,6 +301,23 @@ GoRouter goRouter(GoRouterRef ref) {
                     path: 'student-card',
                     name: AppRoute.studentCard.name,
                     builder: (context, state) => const StudentCardScreen(),
+                  ),
+                  GoRoute(
+                    path: 'kantin',
+                    name: AppRoute.kantinHub.name,
+                    builder: (context, state) => const KantinHubScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'menu-harga',
+                        name: AppRoute.kantinKatalog.name,
+                        builder: (context, state) => const KatalogKantinScreen(),
+                      ),
+                      GoRoute(
+                        path: 'batas-jajan',
+                        name: AppRoute.kantinBatas.name,
+                        builder: (context, state) => const BatasJajanScreen(),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'saldo-topup',

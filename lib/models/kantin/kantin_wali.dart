@@ -236,6 +236,56 @@ class JajanRiwayat {
       );
 }
 
+class ProdukKatalog {
+  const ProdukKatalog({
+    required this.nama,
+    required this.harga,
+    required this.kategori,
+    required this.tersedia,
+  });
+
+  final String nama;
+  final int harga;
+  final String kategori;
+  final bool tersedia;
+
+  factory ProdukKatalog.fromJson(Map<String, dynamic> j) => ProdukKatalog(
+        nama: _str(j['nama']),
+        harga: _int(j['harga']),
+        kategori: _str(j['kategori']),
+        tersedia: j['tersedia'] == null ? true : _bool(j['tersedia']),
+      );
+
+  static List<ProdukKatalog> daftarDari(Map<String, dynamic> data) =>
+      _daftar(data['produk']).map(ProdukKatalog.fromJson).toList();
+}
+
+class BatasJajan {
+  const BatasJajan({
+    required this.batasPondok,
+    required this.batasWali,
+    required this.batasEfektif,
+    required this.terpakaiHariIni,
+  });
+
+  /// 0 = tanpa batas.
+  final int batasPondok;
+  final int batasWali;
+  final int batasEfektif;
+  final int terpakaiHariIni;
+
+  /// Sisa jatah hari ini; null bila tanpa batas.
+  int? get sisa =>
+      batasEfektif > 0 ? (batasEfektif - terpakaiHariIni).clamp(0, batasEfektif) : null;
+
+  factory BatasJajan.fromJson(Map<String, dynamic> j) => BatasJajan(
+        batasPondok: _int(j['batas_pondok']),
+        batasWali: _int(j['batas_wali']),
+        batasEfektif: _int(j['batas_efektif']),
+        terpakaiHariIni: _int(j['terpakai_hari_ini']),
+      );
+}
+
 class HasilAjukanTopup {
   const HasilAjukanTopup({required this.kode, required this.status});
 
