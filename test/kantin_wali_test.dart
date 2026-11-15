@@ -138,6 +138,45 @@ void main() {
     expect(tanpa.terpakaiHariIni, 3000);
   });
 
+  test('hutang: saldo negatif tampil sebagai hutang, server lama tanpa field aman', () {
+    final baru = AnakSaldo.fromJson({
+      'id_siswa': 1, 'nama_santri': 'A', 'nis': '1', 'saldo': -8000, 'ada_kartu': true,
+      'hutang': 8000, 'batas_hutang': 20000, 'topup_min_efektif': 8000,
+    });
+    expect(baru.saldo, -8000);
+    expect(baru.hutang, 8000);
+    expect(baru.batasHutang, 20000);
+    expect(baru.topupMinEfektif, 8000);
+    expect(baru.berhutang, true);
+
+    final lama = AnakSaldo.fromJson({'id_siswa': 2, 'nama_santri': 'B', 'saldo': -5000});
+    expect(lama.hutang, 5000);
+    expect(lama.topupMinEfektif, 0);
+    final normal = AnakSaldo.fromJson({'id_siswa': 3, 'nama_santri': 'C', 'saldo': '12000'});
+    expect(normal.hutang, 0);
+    expect(normal.berhutang, false);
+
+    expect(formatSaldo(-8000), 'Hutang Rp 8.000');
+    expect(formatSaldo(0), 'Rp 0');
+    expect(formatSaldo(12000), 'Rp 12.000');
+  });
+
+  test('riwayat jajan: hutang dan saldo sesudah negatif', () {
+    final r = JajanRiwayat.fromJson({
+      'saldo': -3000, 'hutang': 3000, 'batas_hutang': 20000, 'total_belanja': 1000, 'jumlah': 1,
+      'page': 1,
+      'transaksi': [
+        {'no_nota': 'N1', 'tanggal': '2026-11-16', 'jam': '09:00', 'total': 8000, 'metode': 'tabungan',
+         'saldo_sesudah': -3000, 'item': []},
+      ],
+    });
+    expect(r.hutang, 3000);
+    expect(r.batasHutang, 20000);
+    expect(r.transaksi.single.saldoSesudah, -3000);
+    expect(JajanRiwayat.fromJson({'saldo': -100}).hutang, 100);
+    expect(JajanRiwayat.fromJson({'saldo': 100}).hutang, 0);
+  });
+
   test('hasil pengajuan top-up', () {
     final h = HasilAjukanTopup.fromJson({'kode': 'TU-20261116-0001', 'status': 'menunggu'});
     expect(h.kode, 'TU-20261116-0001');

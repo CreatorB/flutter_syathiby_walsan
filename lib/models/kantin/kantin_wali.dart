@@ -26,6 +26,10 @@ String formatAngka(int nilai) {
 
 String formatRupiah(int nilai) => 'Rp ${formatAngka(nilai)}';
 
+/// Saldo yang boleh negatif: saldo minus ditampilkan sebagai hutang, bukan "-Rp X".
+String formatSaldo(int saldo) =>
+    saldo < 0 ? 'Hutang ${formatRupiah(-saldo)}' : formatRupiah(saldo);
+
 /// "1.250.000" / "Rp 1.250.000" -> 1250000
 int parseNominal(String teks) =>
     int.tryParse(teks.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
@@ -83,13 +87,27 @@ class AnakSaldo {
     required this.nis,
     required this.saldo,
     required this.adaKartu,
+    this.hutang = 0,
+    this.batasHutang = 0,
+    this.topupMinEfektif = 0,
   });
 
   final int idSiswa;
   final String namaSantri;
   final String nis;
+
+  /// Boleh negatif (hutang kantin).
   final int saldo;
   final bool adaKartu;
+
+  /// Hutang kantin (>= 0). Server lama tanpa field ini: diturunkan dari saldo negatif.
+  final int hutang;
+  final int batasHutang;
+
+  /// Minimal nominal top-up untuk anak ini; 0 = ikuti aturan umum.
+  final int topupMinEfektif;
+
+  bool get berhutang => hutang > 0;
 
   factory AnakSaldo.fromJson(Map<String, dynamic> j) => AnakSaldo(
         idSiswa: _int(j['id_siswa']),
@@ -97,6 +115,9 @@ class AnakSaldo {
         nis: _str(j['nis']),
         saldo: _int(j['saldo']),
         adaKartu: _bool(j['ada_kartu']),
+        hutang: _hutang(j),
+        batasHutang: _int(j['batas_hutang']),
+        topupMinEfektif: _int(j['topup_min_efektif']),
       );
 
   static List<AnakSaldo> daftarDari(Map<String, dynamic> data) =>
@@ -219,8 +240,12 @@ class JajanRiwayat {
     required this.jumlah,
     required this.page,
     required this.transaksi,
+    this.hutang = 0,
+    this.batasHutang = 0,
   });
 
+  final int hutang;
+  final int batasHutang;
   final int saldo;
   final int totalBelanja;
   final int jumlah;
@@ -232,6 +257,8 @@ class JajanRiwayat {
         totalBelanja: _int(j['total_belanja']),
         jumlah: _int(j['jumlah']),
         page: _int(j['page']) > 0 ? _int(j['page']) : 1,
+        hutang: _hutang(j),
+        batasHutang: _int(j['batas_hutang']),
         transaksi: _daftar(j['transaksi']).map(JajanTransaksi.fromJson).toList(),
       );
 }
@@ -294,6 +321,16 @@ class HasilAjukanTopup {
 
   factory HasilAjukanTopup.fromJson(Map<String, dynamic> j) =>
       HasilAjukanTopup(kode: _str(j['kode']), status: _str(j['status']));
+}
+
+/// `hutang` dari server; bila tidak dikirim (server lama) diturunkan dari saldo minus.
+int _hutang(Map<String, dynamic> j) {
+  if (j['hutang'] != null) {
+    final h = _int(j['hutang']);
+    return h < 0 ? 0 : h;
+  }
+  final saldo = _int(j['saldo']);
+  return saldo < 0 ? -saldo : 0;
 }
 
 Map<String, dynamic> _peta(dynamic v) =>

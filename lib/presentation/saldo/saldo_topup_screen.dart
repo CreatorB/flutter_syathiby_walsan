@@ -47,7 +47,22 @@ class SaldoTopupScreen extends ConsumerWidget {
                       keterangan: 'Tautkan santri terlebih dahulu di aplikasi.',
                       ikon: Icons.person_outline,
                     )
-                  : Column(children: daftar.map((a) => _KartuSaldo(anak: a)).toList()),
+                  : Column(children: [
+                      for (final a in daftar.where((x) => x.berhutang))
+                        BannerHutang(
+                          anak: a,
+                          onLunasi: () => context.pushNamed(
+                            AppRoute.topupForm.name,
+                            queryParameters: {'anak': '${a.idSiswa}', 'nominal': '${a.hutang}'},
+                          ).then((hasil) {
+                            if (hasil == true) {
+                              ref.invalidate(riwayatTopupProvider);
+                              ref.invalidate(anakSaldoProvider);
+                            }
+                          }),
+                        ),
+                      ...daftar.map((a) => _KartuSaldo(anak: a)),
+                    ]),
             ),
             const SizedBox(height: 16),
             _judul(context, 'Rekening Tujuan Transfer'),
@@ -122,13 +137,7 @@ class _KartuSaldo extends StatelessWidget {
         title: Text(anak.namaSantri),
         subtitle: Text(anak.nis.isEmpty ? 'NIS belum tercatat' : 'NIS ${anak.nis}'
             '${anak.adaKartu ? '' : ' • kartu belum terdaftar'}'),
-        trailing: Text(
-          formatRupiah(anak.saldo),
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium
-              ?.copyWith(fontWeight: FontWeight.bold),
-        ),
+        trailing: TeksSaldo(anak.saldo),
       ),
     );
   }

@@ -327,7 +327,10 @@ GoRouter goRouter(GoRouterRef ref) {
                       GoRoute(
                         path: 'isi-saldo',
                         name: AppRoute.topupForm.name,
-                        builder: (context, state) => const TopupFormScreen(),
+                        builder: (context, state) => TopupFormScreen(
+                          idSiswaAwal: int.tryParse(state.uri.queryParameters['anak'] ?? ''),
+                          nominalAwal: int.tryParse(state.uri.queryParameters['nominal'] ?? ''),
+                        ),
                       ),
                     ],
                   ),

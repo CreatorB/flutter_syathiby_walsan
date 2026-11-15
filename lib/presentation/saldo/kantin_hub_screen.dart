@@ -36,20 +36,25 @@ class KantinHubScreen extends ConsumerWidget {
               error: (e, _) =>
                   GagalMemuat(error: e, onCoba: () => ref.invalidate(anakSaldoProvider)),
               data: (daftar) => Column(
-                children: daftar
-                    .map((a) => Card(
-                          child: ListTile(
-                            leading: const CircleAvatar(child: Icon(Icons.person)),
-                            title: Text(a.namaSantri),
-                            subtitle: Text(a.adaKartu ? 'Kartu terdaftar' : 'Kartu belum terdaftar'),
-                            trailing: Text(
-                              formatRupiah(a.saldo),
-                              style: tema.textTheme.titleMedium
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ))
-                    .toList(),
+                children: [
+                  for (final a in daftar.where((x) => x.berhutang))
+                    BannerHutang(
+                      anak: a,
+                      onLunasi: () => context.pushNamed(
+                        AppRoute.topupForm.name,
+                        queryParameters: {'anak': '${a.idSiswa}', 'nominal': '${a.hutang}'},
+                      ),
+                    ),
+                  for (final a in daftar)
+                    Card(
+                      child: ListTile(
+                        leading: const CircleAvatar(child: Icon(Icons.person)),
+                        title: Text(a.namaSantri),
+                        subtitle: Text(a.adaKartu ? 'Kartu terdaftar' : 'Kartu belum terdaftar'),
+                        trailing: TeksSaldo(a.saldo),
+                      ),
+                    ),
+                ],
               ),
             ),
             const SizedBox(height: 16),

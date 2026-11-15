@@ -28,7 +28,13 @@ class PemisahRibuan extends TextInputFormatter {
 }
 
 class TopupFormScreen extends ConsumerStatefulWidget {
-  const TopupFormScreen({super.key});
+  const TopupFormScreen({super.key, this.idSiswaAwal, this.nominalAwal});
+
+  /// Anak terpilih awal (mis. dari tombol "Lunasi Sekarang").
+  final int? idSiswaAwal;
+
+  /// Nominal terisi awal (mis. sebesar hutang).
+  final int? nominalAwal;
 
   @override
   ConsumerState<TopupFormScreen> createState() => _TopupFormScreenState();
@@ -47,6 +53,14 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
   Uint8List? _bukti;
   String _namaBerkas = 'bukti.jpg';
   bool _mengirim = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _idSiswa = widget.idSiswaAwal;
+    final n = widget.nominalAwal;
+    if (n != null && n > 0) _nominal.text = formatAngka(n);
+  }
 
   @override
   void dispose() {
@@ -224,9 +238,14 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
         ),
       );
     }
-    _idSiswa ??= daftarAnak.first.idSiswa;
+    if (_idSiswa == null || !daftarAnak.any((a) => a.idSiswa == _idSiswa)) {
+      _idSiswa = daftarAnak.first.idSiswa;
+    }
     _idRekening ??= data.rekening.first.idRekening;
-    final aturan = data.aturan;
+    final anakTerpilih = daftarAnak.firstWhere((a) => a.idSiswa == _idSiswa);
+    final minAnak =
+        anakTerpilih.topupMinEfektif > 0 ? anakTerpilih.topupMinEfektif : data.aturan.min;
+    final aturan = AturanTopup(min: minAnak, maks: data.aturan.maks);
 
     return Form(
       key: _form,
@@ -241,6 +260,22 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
                 .toList(),
             onChanged: (v) => setState(() => _idSiswa = v),
           ),
+          if (anakTerpilih.berhutang) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                border: Border.all(color: Colors.red.shade200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Ananda memiliki hutang kantin ${formatRupiah(anakTerpilih.hutang)}. '
+                'Top-up akan melunasi hutang lebih dulu; sisanya menjadi saldo.',
+                style: TextStyle(color: Colors.red.shade900),
+              ),
+            ),
+          ],
           const SizedBox(height: 14),
           TextFormField(
             controller: _nominal,
@@ -250,7 +285,8 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
               labelText: 'Nominal transfer',
               prefixText: 'Rp ',
               helperText:
-                  'Minimal ${formatRupiah(aturan.min)}, maksimal ${formatRupiah(aturan.maks)}',
+                  'Minimal ${formatRupiah(aturan.min)}, maksimal ${formatRupiah(aturan.maks)}'
+                  '${anakTerpilih.berhutang ? '. Top-up melunasi hutang lebih dulu.' : ''}',
               border: const OutlineInputBorder(),
             ),
             validator: (v) {

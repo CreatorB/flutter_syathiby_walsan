@@ -22,6 +22,7 @@ class _JajanAnakScreenState extends ConsumerState<JajanAnakScreen> {
   int? _idSiswa;
   late DateTimeRange _periode;
   int _saldo = 0;
+  int _hutang = 0;
   int _totalBelanja = 0;
   int _jumlah = 0;
   int _halaman = 0;
@@ -80,6 +81,7 @@ class _JajanAnakScreenState extends ConsumerState<JajanAnakScreen> {
       setState(() {
         _halaman = _halaman + 1;
         _saldo = h.saldo;
+        _hutang = h.hutang;
         _totalBelanja = h.totalBelanja;
         _jumlah = h.jumlah;
         _daftar.addAll(h.transaksi);
@@ -170,10 +172,17 @@ class _JajanAnakScreenState extends ConsumerState<JajanAnakScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Saldo saat ini'),
-                  Text(formatRupiah(_saldo),
-                      style: tema.textTheme.headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  Text(_saldo < 0 ? 'Hutang kantin' : 'Saldo saat ini'),
+                  TeksSaldo(
+                    _saldo,
+                    gaya: tema.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  if (_hutang > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text('Lunasi lewat Top-up di menu Saldo & Top-up.',
+                          style: tema.textTheme.bodySmall?.copyWith(color: Colors.red.shade700)),
+                    ),
                   const Divider(height: 24),
                   Row(
                     children: [
@@ -270,8 +279,12 @@ class _KartuTransaksi extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 6),
-            Text('Saldo sesudah: ${formatRupiah(transaksi.saldoSesudah)}',
-                style: tema.textTheme.bodySmall),
+            Text(
+                transaksi.saldoSesudah < 0
+                    ? 'Hutang sesudah: ${formatRupiah(-transaksi.saldoSesudah)}'
+                    : 'Saldo sesudah: ${formatRupiah(transaksi.saldoSesudah)}',
+                style: tema.textTheme.bodySmall?.copyWith(
+                    color: transaksi.saldoSesudah < 0 ? Colors.red.shade700 : null)),
           ],
         ),
       ),
