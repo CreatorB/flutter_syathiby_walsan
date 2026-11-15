@@ -57,6 +57,9 @@ import '../presentation/prayer/surah_screen.dart';
 import '../presentation/privacy_policy/about_us_screen.dart';
 import '../presentation/privacy_policy/agreement_screen.dart';
 import '../presentation/privacy_policy/privacy_policy_screen.dart';
+import '../presentation/saldo/jajan_anak_screen.dart';
+import '../presentation/saldo/saldo_topup_screen.dart';
+import '../presentation/saldo/topup_form_screen.dart';
 import '../presentation/score/student_score_detail_screen.dart';
 import '../presentation/tv/tv_screen.dart';
 import '../presentation/webview/webview_screen.dart';
@@ -88,6 +91,9 @@ enum AppRoute {
   bill,
   studentHealth,
   studentCard,
+  saldoTopup,
+  topupForm,
+  jajanAnak,
   studentSaving,
   studentEvaluation,
   studentViolation,
@@ -289,6 +295,23 @@ GoRouter goRouter(GoRouterRef ref) {
                     path: 'student-card',
                     name: AppRoute.studentCard.name,
                     builder: (context, state) => const StudentCardScreen(),
+                  ),
+                  GoRoute(
+                    path: 'saldo-topup',
+                    name: AppRoute.saldoTopup.name,
+                    builder: (context, state) => const SaldoTopupScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'isi-saldo',
+                        name: AppRoute.topupForm.name,
+                        builder: (context, state) => const TopupFormScreen(),
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'jajan-anak',
+                    name: AppRoute.jajanAnak.name,
+                    builder: (context, state) => const JajanAnakScreen(),
                   ),
                   GoRoute(
                       path: 'violation',

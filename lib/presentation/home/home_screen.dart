@@ -342,6 +342,16 @@ class HomeScreen extends HookConsumerWidget {
                         iconData: Icons.credit_card,
                         goToRouteName: AppRoute.studentCard.name,
                       ),
+                      MenuGrid(
+                        title: 'Saldo & Top-up',
+                        iconData: Icons.account_balance_wallet,
+                        goToRouteName: AppRoute.saldoTopup.name,
+                      ),
+                      MenuGrid(
+                        title: 'Jajan Anak',
+                        iconData: Icons.fastfood,
+                        goToRouteName: AppRoute.jajanAnak.name,
+                      ),
                       // MenuGrid(
                       //   title: 'Penilaian',
                       //   iconData: Icons.edit_document,
