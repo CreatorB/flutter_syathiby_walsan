@@ -1,7 +1,7 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kDebugMode, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -50,15 +50,31 @@ class MyApp extends HookConsumerWidget {
         routerConfig: goRouter,
         theme: light,
         darkTheme: dark,
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: kDebugMode,
         builder: (context, child) {
           final appChild = child ?? const SizedBox.shrink();
-          // Show LOCAL banner only in development – production stays clean
+          // Banner environment: LOCAL (dev) dan STAGING (server uji).
+          // Build release tidak bisa memakai banner debug bawaan Flutter
+          // (CheckedModeBanner hanya hidup di mode debug), jadi banner
+          // digambar sendiri dengan tampilan yang sama (22 Nov 2026).
           if (FlavorConfig.isLocal) {
             return Banner(
               message: 'LOCAL',
               location: BannerLocation.topEnd,
               color: Colors.red,
+              child: appChild,
+            );
+          }
+          if (FlavorConfig.isStaging) {
+            return Banner(
+              message: 'STAGING',
+              location: BannerLocation.topEnd,
+              color: const Color(0xFFFFC107),
+              textStyle: const TextStyle(
+                color: Color(0xFF000000),
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
               child: appChild,
             );
           }
