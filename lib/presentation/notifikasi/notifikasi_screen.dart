@@ -34,10 +34,9 @@ class NotifikasiScreen extends HookConsumerWidget {
     final noWali = '${currentUser?.user ?? ''}';
     final list = ref.watch(notifikasiListProvider);
     // Notifier SELALU diambil lewat ref.read, tidak disimpan di useRef.
-    // Provider-nya auto-dispose: kalau notifier disimpan di ref, saat
-    // provider di-create ulang notifier yang disimpan bisa sudah dibuang --
-    // hasil fetch-nya masuk ke provider yang tidak lagi dipakai, dan daftar
-    // tampil kosong padahal server sudah mengirim data.
+    // Notifier yang disimpan bisa jadi tidak lagi dipakai provider --
+    // hasil fetch-nya masuk ke provider yang ditinggalkan, dan daftar tampil
+    // kosong padahal server sudah mengirim data.
     void muatAwal() =>
         ref.read(notifikasiListProvider.notifier).muatAwal(key, noWali);
     void muatLagi() =>

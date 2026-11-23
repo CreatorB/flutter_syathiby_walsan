@@ -218,9 +218,9 @@ class NotifikasiRead extends AsyncNotifier<void> {
       // Gagal menandai tidak boleh menggagalkan UI.
     }
     // PENTING: provider daftar (notifikasiListProvider) TIDAK boleh di-invalidate
-    // di sini. Provider itu auto-dispose: invalidate akan membuatnya di-create
-    // ulang dengan state KOSONG, jadi daftar yang barusan di-load lenyap dan
-    // layar tampil "Belum ada notifikasi" padahal server sudah mengirim data.
+    // di sini. Invalidate membangun ulang state provider dari awal (kosong),
+    // jadi daftar yang barusan di-load lenyap dan layar tampil "Belum ada
+    // notifikasi" padahal server sudah mengirim data.
     // Daftar diperbarui secara lokal (tandaiTerbacaDiDaftar); yang perlu
     // disegarkan hanya jumlah belum dibaca untuk badge lonceng.
     ref.invalidate(notifikasiUnreadProvider);
