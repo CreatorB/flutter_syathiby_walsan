@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:rabbaanii_portal/di/providers.dart';
+import 'package:rabbaanii_portal/models/notifikasi/notifikasi_service.dart';
 import 'package:rabbaanii_portal/models/cart/cart_service.dart';
 import 'package:rabbaanii_portal/models/change_schedule/change_schedule_service.dart';
 import 'package:rabbaanii_portal/models/days/days_service.dart';
@@ -272,4 +273,9 @@ MurottalService murottalService(MurottalServiceRef ref) {
 @Riverpod(keepAlive: true)
 AnalyticsRestInterface analyticsService(AnalyticsServiceRef ref) {
   return AnalyticsRestInterface(ref.watch(dioProvider));
+}
+
+@Riverpod(keepAlive: true)
+NotifikasiService notifikasiService(NotifikasiServiceRef ref) {
+  return NotifikasiService(ref.watch(dioProvider));
 }
