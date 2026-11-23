@@ -45,6 +45,8 @@ import '../presentation/guest/guest_shell.dart';
 import '../presentation/guest/guest_user_screen.dart';
 import '../presentation/holiday/holiday_screen.dart';
 import '../presentation/not_found/not_found_screen.dart';
+import '../presentation/notifikasi/notifikasi_detail_screen.dart';
+import '../presentation/notifikasi/notifikasi_screen.dart';
 import '../presentation/prayer/ayah_screen.dart';
 import '../presentation/prayer/book_screen.dart';
 import '../presentation/prayer/dhikr_screen.dart';
@@ -135,6 +137,8 @@ enum AppRoute {
   guestUser,
   mukholifSearch,
   mukholifDetail,
+  notifikasi,
+  notifikasiDetail,
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -461,6 +465,23 @@ GoRouter goRouter(GoRouterRef ref) {
                             ),
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                  GoRoute(
+                    path: 'notifikasi',
+                    name: AppRoute.notifikasi.name,
+                    builder: (context, state) => const NotifikasiScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        name: AppRoute.notifikasiDetail.name,
+                        builder: (context, state) => NotifikasiDetailScreen(
+                          id: int.tryParse(
+                                state.pathParameters['id'] ?? '0',
+                              ) ??
+                              0,
+                        ),
                       ),
                     ],
                   ),
