@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show Platform;
 
@@ -15,6 +16,7 @@ import 'package:rabbaanii_portal/models/user/login.dart';
 import 'package:rabbaanii_portal/presentation/home/bottomsheet_add_student_screen.dart';
 import 'package:rabbaanii_portal/presentation/home/home_controller.dart';
 import 'package:rabbaanii_portal/presentation/home/menu_home.dart';
+import 'package:rabbaanii_portal/presentation/notifikasi/notifikasi_controller.dart';
 import 'package:rabbaanii_portal/routing/app_router.dart';
 import 'package:rabbaanii_portal/utils/custom_avatar_widget.dart';
 import 'package:rabbaanii_portal/utils/extension/color.dart';
@@ -406,6 +408,73 @@ class HomeScreen extends HookConsumerWidget {
     );
   }
 
+  /// Lonceng notifikasi di header.
+  ///
+  /// Push FCM ke wali nyaris tidak pernah sampai -- `wali_siswa.token` kosong
+  /// semua di produksi per 24 Nov 2026 -- jadi jumlah notifikasi yang belum
+  /// dibaca diambil dari server (kotak masuk lonceng), bukan dari push.
+  /// Angka di lonceng = notifikasi baru yang belum dibuka.
+  ///
+  /// Ikon memakai putih karena latar header berupa gambar gelap, bukan warna
+  /// primary (seperti tombol "Tambah Santri" di sebelahnya).
+  Widget _buildLoncengNotifikasi(
+    BuildContext context,
+    WidgetRef ref,
+    Login? currentUser,
+  ) {
+    final key = '${currentUser?.key}';
+    // Nomor wali yang sedang login -- kunci sesi hanya menandai SANATRI dan
+    // dipakai bersama seluruh walinya.
+    final noWali = '${currentUser?.user ?? ''}';
+    final belum = ref.watch(notifikasiUnreadProvider);
+    final jumlah = belum.valueOrNull ?? 0;
+
+    // Angka lonceng disegarkan tiap menit supaya notifikasi baru langsung
+    // terlihat tanpa harus menutup aplikasi.
+    useEffect(() {
+      if (key.isEmpty || key == 'null' || noWali.isEmpty) return null;
+      final timer = Timer.periodic(const Duration(seconds: 60), (_) {
+        ref.invalidate(notifikasiUnreadProvider);
+      });
+      return timer.cancel;
+    }, [key, noWali]);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        IconButton(
+          tooltip: 'Notifikasi',
+          icon: const Icon(
+            Icons.notifications_none,
+            color: Colors.white,
+            size: 24,
+          ),
+          onPressed: () => context.goNamed(AppRoute.notifikasi.name),
+        ),
+        if (jumlah > 0)
+          Positioned(
+            right: 4,
+            top: 4,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+              decoration: BoxDecoration(
+                color: context.colorError,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                jumlah > 99 ? '99+' : '$jumlah',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
   Widget _buildHeader(
     BuildContext context,
     bool isLoading,
@@ -494,6 +563,7 @@ class HomeScreen extends HookConsumerWidget {
                       ),
                     ),
                   ),
+                  _buildLoncengNotifikasi(context, ref, currentUser),
                   IconButton(
                     tooltip: 'Tambah Santri',
                     onPressed: () {
