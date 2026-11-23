@@ -10,6 +10,7 @@ import 'package:rabbaanii_portal/models/kantin/kantin_wali.dart';
 import 'package:rabbaanii_portal/models/kantin/kantin_wali_repository.dart';
 import 'package:rabbaanii_portal/presentation/saldo/saldo_widgets.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
+import 'package:rabbaanii_portal/utils/kompres_gambar.dart';
 
 const int _batasBuktiByte = 5 * 1024 * 1024;
 
@@ -79,7 +80,10 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
         imageQuality: 80,
       );
       if (berkas == null) return;
-      final bytes = await berkas.readAsBytes();
+      // Kompres sebelum dikirim. Di web, image_picker mengabaikan
+      // maxWidth/imageQuality, jadi tanpa langkah ini bukti transfer bisa
+      // 5 MB dan membebani server.
+      final bytes = await kompresGambarUntukUnggah(await berkas.readAsBytes());
       if (bytes.length > _batasBuktiByte) {
         if (mounted) {
           context.showSnackBar(
