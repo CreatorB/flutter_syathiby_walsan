@@ -39,8 +39,9 @@ class NotifikasiScreen extends HookConsumerWidget {
     // kosong padahal server sudah mengirim data.
     void muatAwal() =>
         ref.read(notifikasiListProvider.notifier).muatAwal(key, noWali);
-    void muatLagi() =>
-        ref.read(notifikasiListProvider.notifier).muatLagi(key, noWali);
+    void muatMingguBerikutnya() => ref
+        .read(notifikasiListProvider.notifier)
+        .muatMingguBerikutnya(key, noWali);
     void tandaiTerbaca(int id) => ref
         .read(notifikasiListProvider.notifier)
         .tandaiTerbacaDiDaftar(id);
@@ -58,15 +59,21 @@ class NotifikasiScreen extends HookConsumerWidget {
       void onScroll() {
         if (!scroll.hasClients) return;
         if (scroll.position.pixels >= scroll.position.maxScrollExtent - 300) {
-          muatLagi();
+          muatMingguBerikutnya();
         }
       }
 
       scroll.addListener(onScroll);
       return () => scroll.removeListener(onScroll);
-    }, [key, noWali, list.page]);
+    }, [key, noWali, list.blok.length]);
 
-    final items = list.items;
+    // Daftar yang diratakan jadi satu daftar datar: header minggu + item.
+    final entries = <Object>[];
+    for (final blok in list.blok) {
+      entries.add(blok);
+      entries.addAll(blok.items);
+    }
+    final items = list.jumlahItem;
 
     return Scaffold(
       appBar: AppBar(
@@ -108,17 +115,17 @@ class NotifikasiScreen extends HookConsumerWidget {
               .muatAwal(key, noWali);
           ref.invalidate(notifikasiUnreadProvider);
         },
-        child: list.loading && items.isEmpty
+        child: list.loading && items == 0
             ? const Center(child: CircularProgressIndicator())
-            : items.isEmpty
+            : items == 0
                 ? _kosong(context)
                 : ListView.builder(
                     controller: scroll,
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.only(bottom: 24),
-                    itemCount: items.length + (list.hasMore ? 1 : 0),
+                    itemCount: entries.length + (list.adaLagi ? 1 : 0),
                     itemBuilder: (context, index) {
-                      if (index >= items.length) {
+                      if (index >= entries.length) {
                         return const Padding(
                           padding: EdgeInsets.all(16),
                           child: Center(
@@ -130,26 +137,14 @@ class NotifikasiScreen extends HookConsumerWidget {
                           ),
                         );
                       }
-                      final n = items[index];
-                      final tampilKelompok = index == 0 ||
-                          WaktuNotifikasi.kelompokTanggal(
-                                items[index - 1].createdAt,
-                              ) !=
-                              WaktuNotifikasi.kelompokTanggal(n.createdAt);
+                      final entri = entries[index];
+                      if (entri is BlokMinggu) {
+                        return _HeaderMinggu(label: entri.label);
+                      }
+                      final n = entri as Notifikasi;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (tampilKelompok)
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
-                              child: Text(
-                                WaktuNotifikasi.kelompokTanggal(n.createdAt),
-                                style: context.bodySmall?.copyWith(
-                                  color: context.colorOutline,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
                           _BarisNotifikasi(
                             notifikasi: n,
                             onTap: () {
@@ -213,6 +208,28 @@ class NotifikasiScreen extends HookConsumerWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Judul kelompok minggu: 'Pekan ini', 'Pekan lalu', dst.
+class _HeaderMinggu extends StatelessWidget {
+  const _HeaderMinggu({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+      child: Text(
+        label.toUpperCase(),
+        style: context.bodySmall?.copyWith(
+          color: context.colorOutline,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
+      ),
     );
   }
 }
