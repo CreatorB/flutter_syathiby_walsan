@@ -54,6 +54,9 @@ class NotifikasiHalaman with _$NotifikasiHalaman {
     int? total,
     int? unread,
     int? page,
+    int? week,
+    String? label,
+    @JsonKey(name: 'ada_lagi') bool? adaLagi,
   }) = _NotifikasiHalaman;
 
   factory NotifikasiHalaman.fromJson(Map<String, dynamic> json) =>
