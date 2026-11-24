@@ -14,13 +14,17 @@ part 'notifikasi_service.g.dart';
 abstract class NotifikasiService {
   factory NotifikasiService(Dio dio, {String baseUrl}) = _NotifikasiService;
 
-  /// Daftar notifikasi wali yang sedang login (satu halaman).
+  /// Daftar notifikasi wali yang sedang login, satu MINGGU per permintaan.
+  ///
+  /// `week` 0 = minggu berjalan, 1 = minggu lalu, dst. Server mengembalikan
+  /// `ada_lagi` kalau masih ada minggu yang lebih lama -- itu yang dipakai
+  /// aplikasi untuk memuat minggu berikutnya saat daftar di-scroll.
   @GET('wali/notifikasi.php')
   Future<NotifikasiHalaman> getNotifikasi(
     @Query('key') String key,
     @Query('phone_number') String phoneNumber,
     @Query('act') String act,
-    @Query('page') int page,
+    @Query('week') int week,
   );
 
   /// Detail satu notifikasi. Server hanya mengembalikan notifikasi milik wali
