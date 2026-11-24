@@ -9,6 +9,7 @@ import 'package:rabbaanii_portal/di/providers.dart';
 import 'package:rabbaanii_portal/models/kantin/kantin_wali.dart';
 import 'package:rabbaanii_portal/models/kantin/kantin_wali_repository.dart';
 import 'package:rabbaanii_portal/presentation/saldo/saldo_widgets.dart';
+import 'package:rabbaanii_portal/presentation/widgets/gambar_zoom.dart';
 import 'package:rabbaanii_portal/utils/extension/ui.dart';
 import 'package:rabbaanii_portal/utils/kompres_gambar.dart';
 
@@ -349,9 +350,16 @@ class _TopupFormScreenState extends ConsumerState<TopupFormScreen> {
           Text('Foto bukti transfer', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           if (_bukti != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.memory(_bukti!, height: 220, fit: BoxFit.cover),
+            GestureDetector(
+              onTap: () => showGambarZoomBytes(
+                context,
+                bytes: _bukti!,
+                judul: 'Bukti transfer',
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.memory(_bukti!, height: 220, fit: BoxFit.cover),
+              ),
             ),
           const SizedBox(height: 8),
           OutlinedButton.icon(
