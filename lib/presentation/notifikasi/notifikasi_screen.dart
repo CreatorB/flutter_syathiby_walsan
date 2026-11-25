@@ -37,15 +37,35 @@ class NotifikasiScreen extends HookConsumerWidget {
     // Notifier yang disimpan bisa jadi tidak lagi dipakai provider --
     // hasil fetch-nya masuk ke provider yang ditinggalkan, dan daftar tampil
     // kosong padahal server sudah mengirim data.
-    void muatAwal() =>
-        ref.read(notifikasiListProvider.notifier).muatAwal(key, noWali);
-    void muatMingguBerikutnya() => ref
-        .read(notifikasiListProvider.notifier)
-        .muatMingguBerikutnya(key, noWali);
     void tandaiTerbaca(int id) => ref
         .read(notifikasiListProvider.notifier)
         .tandaiTerbacaDiDaftar(id);
     final scroll = useMemoized(() => ScrollController(), []);
+
+    // Muat minggu berikutnya. Kalau daftar masih tidak menutup layar (mis.
+    // minggu ini cuma ada dua notifikasi), tidak ada yang bisa digulir --
+    // jadi minggu berikutnya dimuat sendiri supaya pengguna tidak perlu
+    // menggulir dulu untuk melihat notifikasi yang lebih lama.
+    Future<void> muatMingguBerikutnya() async {
+      await ref
+          .read(notifikasiListProvider.notifier)
+          .muatMingguBerikutnya(key, noWali);
+      if (!scroll.hasClients) return;
+      final terbaru = ref.read(notifikasiListProvider);
+      if (terbaru.adaLagi && scroll.position.maxScrollExtent <= 0) {
+        await Future.delayed(const Duration(milliseconds: 250));
+        await muatMingguBerikutnya();
+      }
+    }
+
+    Future<void> muatAwal() async {
+      await ref.read(notifikasiListProvider.notifier).muatAwal(key, noWali);
+      // Tunggu satu frame supaya ScrollController sudah punya client --
+      // tanpa itu pengecekan "daftar cukup pendek" selalu gagal.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        muatMingguBerikutnya();
+      });
+    }
 
     // Muat halaman pertama saat layar dibuka.
     useEffect(() {
