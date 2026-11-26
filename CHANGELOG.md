@@ -7,6 +7,45 @@ Sections: **Added · Changed · Fixed · Removed**
 
 ---
 
+## [1.0.2] – 2026-11-26
+
+Rilis pertama aplikasi Walsan di Play Store. Versi ini juga menjadi versi web yang tayang di
+`https://walsan.syathiby.id/` sambil menunggu pembaruan Play Store.
+
+### Ditambahkan
+- **Menu Kantin untuk Wali**
+  - Saldo & top-up anak (dengan bukti transfer), riwayat jajan, menu & harga kantin, dan batas jajan harian
+  - Tampilan hutang kantin anak lengkap dengan banner dan tombol "Lunasi Sekarang", plus minimal top-up efektif
+  - **File yang Dimodifikasi**: `lib/presentation/saldo/`, `lib/presentation/kantin/`
+- **Lonceng Notifikasi**
+  - Kotak masuk notifikasi di aplikasi Walsan: pengajuan izin, laporan kegiatan, dan pemberitahuan lain masuk ke satu tempat
+  - **File yang Dimodifikasi**: `lib/presentation/notifikasi/`
+- **Dzikir Pagi dan Petang**
+  - Dimuat dari JSON publik `aplikasi.syathiby.id/dzikir` dengan cadangan aset bawaan sesuai almanhaj.or.id, jadi tetap tampil walau jaringan lambat
+  - **File yang Dimodifikasi**: `lib/presentation/`
+- **Gambar Bisa Dibuka Layar Penuh dan Diperbesar**
+  - Bukti transfer top-up dan gambar berita bisa dibuka layar penuh: ketuk gambarnya, lalu perbesar dengan cubit dua jari, klik ganda, tombol +/-, atau roda mouse di versi web
+  - **File yang Dimodifikasi**: `lib/presentation/widgets/gambar_zoom.dart`, `lib/presentation/saldo/topup_form_screen.dart`, `lib/presentation/wordpress/wp_post_list_item.dart`
+
+### Diubah
+- **Daftar Notifikasi Dikelompokkan per Minggu**
+  - Notifikasi dikelompokkan per minggu, dan jamnya mengikuti waktu setempat (sebelumnya terbaca 7 jam lebih cepat karena waktu server dibaca sebagai waktu lokal)
+  - Minggu berikutnya ikut termuat otomatis saat daftar digulir ke bawah, walau daftar belum penuh di layar
+  - **File yang Dimodifikasi**: `lib/presentation/notifikasi/notifikasi_screen.dart`
+- **Kompresi Gambar Sebelum Diunggah**
+  - Foto dikompres lebih dulu di perangkat sebelum dikirim ke server, jadi lebih ringan
+  - **File yang Dimodifikasi**: `lib/presentation/`
+- **Notifikasi Push Walsan Pakai Project Firebase yang Sama**
+  - Aplikasi Walsan memakai project `syathiby-1345121` yang sama dengan aplikasi staff, sehingga token perangkat tidak lagi ditolak server. Push untuk browser belum diaktifkan untuk Walsan; notifikasi wali masuk lewat kotak masuk aplikasi
+  - **File yang Dimodifikasi**: `web/version.json`
+
+### Diperbaiki
+- **Halaman yang Butuh Data Navigasi Tidak Lagi Layar Putih**
+  - Di versi web, halaman yang bergantung pada data navigasi dimuat ulang ke tab induk, bukan tampil sebagai layar putih
+  - **File yang Dimodifikasi**: `lib/routing/app_router.dart`
+
+---
+
 ## [1.0.0] – 2026-10-29
 
 ### Changed

@@ -27,7 +27,8 @@ def mapsApiKey = System.getenv("MAPS_API_KEY") ?: localProperties.getProperty("M
 
 android {
     namespace = "walsan.syathiby.id"
-    compileSdk = 35
+    // Play Store: sejak 31 Agu 2026 aplikasi baru wajib target API 36.
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -48,7 +49,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion
-        targetSdk = 35
+        targetSdk = 36
         versionCode = flutterVersionCode.toInteger().toInteger().toInteger().toInteger()
         versionName = flutterVersionName
         manifestPlaceholders = [MAPS_API_KEY: mapsApiKey]
